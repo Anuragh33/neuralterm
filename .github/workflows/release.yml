@@ -81,4 +81,4 @@ jobs:
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
-          releaseAssetNamePattern: NeuralTerm_[version]_[platform]_[arch]_[bundle][ext]
+          assetNamePattern: NeuralTerm_[version]_[platform]_[arch]_[bundle][ext]
