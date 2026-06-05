@@ -73,10 +73,10 @@ p {
 }
 
 h1 {
-  max-width: 980px;
+  max-width: 760px;
   margin-bottom: 16px;
-  font-size: 58px;
-  line-height: 1;
+  font-size: 52px;
+  line-height: 1.04;
 }
 
 h2 {
@@ -381,11 +381,11 @@ h3 {
 
 .hero-command {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 12px 24px;
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+  align-content: start;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 18px;
+  padding-bottom: 20px;
 }
 
 .prompt-line {
@@ -406,7 +406,7 @@ h3 {
 }
 
 .hero-command p:not(.prompt-line) {
-  max-width: 720px;
+  max-width: 760px;
   margin-bottom: 0;
   color: var(--muted);
   font-size: 18px;
@@ -415,8 +415,9 @@ h3 {
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: flex-end;
+  justify-content: flex-start;
   gap: 10px;
+  margin-top: 4px;
 }
 
 .button {
