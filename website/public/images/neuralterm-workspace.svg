@@ -3,12 +3,12 @@
   <desc id="desc">A detailed preview of NeuralTerm showing sidebar sessions, split terminals, AI Bridge cards, and an assistant pane.</desc>
   <defs>
     <linearGradient id="workspaceBg" x1="0" y1="0" x2="1600" y2="980" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0B0C10"/>
-      <stop offset="1" stop-color="#15141D"/>
+      <stop stop-color="#0e0e10"/>
+      <stop offset="1" stop-color="#16161a"/>
     </linearGradient>
     <linearGradient id="card" x1="120" y1="110" x2="1480" y2="850" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#171821"/>
-      <stop offset="1" stop-color="#0D0E14"/>
+      <stop stop-color="#1a1a22"/>
+      <stop offset="1" stop-color="#0e0e10"/>
     </linearGradient>
     <filter id="workspaceShadow" x="72" y="72" width="1456" height="838" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
       <feFlood flood-opacity="0" result="BackgroundImageFix"/>
@@ -23,88 +23,88 @@
   </defs>
 
   <rect width="1600" height="980" fill="url(#workspaceBg)"/>
-  <text x="100" y="80" fill="#F7F7FF" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">One workspace for terminals, AI, and release work</text>
-  <text x="100" y="118" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="18">Persistent sessions, split panes, Claude Code, HER, and AI Bridge error context.</text>
+  <text x="100" y="80" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="34" font-weight="800">One workspace for terminals, AI, and release work</text>
+  <text x="100" y="118" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="18">Persistent sessions, split panes, Claude Code, HER, and AI Bridge error context.</text>
 
   <g filter="url(#workspaceShadow)">
-    <rect x="100" y="150" width="1400" height="730" rx="26" fill="url(#card)" stroke="#2C2E3A"/>
-    <rect x="100" y="150" width="1400" height="50" rx="26" fill="#101119"/>
-    <rect x="100" y="176" width="1400" height="24" fill="#101119"/>
-    <circle cx="132" cy="175" r="7" fill="#FF6B6B"/>
-    <circle cx="156" cy="175" r="7" fill="#FFD166"/>
-    <circle cx="180" cy="175" r="7" fill="#5CE1A9"/>
-    <text x="214" y="181" fill="#F0F0FA" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">NeuralTerm</text>
+    <rect x="100" y="150" width="1400" height="730" rx="26" fill="url(#card)" stroke="#2a2a30"/>
+    <rect x="100" y="150" width="1400" height="50" rx="26" fill="#101016"/>
+    <rect x="100" y="176" width="1400" height="24" fill="#101016"/>
+    <circle cx="132" cy="175" r="7" fill="#e05050"/>
+    <circle cx="156" cy="175" r="7" fill="#e0a050"/>
+    <circle cx="180" cy="175" r="7" fill="#4db877"/>
+    <text x="214" y="181" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">NeuralTerm</text>
 
-    <rect x="100" y="200" width="274" height="680" fill="#0E0F15"/>
-    <text x="130" y="240" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="1">WORKSPACES</text>
-    <rect x="128" y="260" width="218" height="38" rx="8" fill="#1A1B26" stroke="#2C2F3E"/>
-    <text x="150" y="284" fill="#F5F4FF" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700">Default</text>
-    <rect x="128" y="308" width="218" height="38" rx="8" fill="#11121A"/>
-    <text x="150" y="332" fill="#9B9FB4" font-family="Inter, Arial, sans-serif" font-size="14">Release Lab</text>
-    <text x="130" y="386" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="1">SESSIONS</text>
-    <rect x="128" y="408" width="218" height="44" rx="9" fill="#191B25" stroke="#2E3142"/>
-    <circle cx="151" cy="430" r="5" fill="#5CE1A9"/>
-    <text x="170" y="435" fill="#F3F2FF" font-family="Inter, Arial, sans-serif" font-size="14">Release Shell</text>
-    <rect x="128" y="462" width="218" height="44" rx="9" fill="#11121A"/>
-    <circle cx="151" cy="484" r="5" fill="#8C7CFF"/>
-    <text x="170" y="489" fill="#CED1E2" font-family="Inter, Arial, sans-serif" font-size="14">Claude Code</text>
-    <rect x="128" y="516" width="218" height="44" rx="9" fill="#11121A"/>
-    <circle cx="151" cy="538" r="5" fill="#FFB86B"/>
-    <text x="170" y="543" fill="#CED1E2" font-family="Inter, Arial, sans-serif" font-size="14">HER</text>
+    <rect x="100" y="200" width="274" height="680" fill="#16161a"/>
+    <text x="130" y="240" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="1">WORKSPACES</text>
+    <rect x="128" y="260" width="218" height="38" rx="8" fill="#1e1e28" stroke="#2a2a30"/>
+    <text x="150" y="284" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700">Default</text>
+    <rect x="128" y="308" width="218" height="38" rx="8" fill="#101016"/>
+    <text x="150" y="332" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="14">Release Lab</text>
+    <text x="130" y="386" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="1">SESSIONS</text>
+    <rect x="128" y="408" width="218" height="44" rx="9" fill="#1e1e28" stroke="#2a2a30"/>
+    <circle cx="151" cy="430" r="5" fill="#4db877"/>
+    <text x="170" y="435" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="14">Release Shell</text>
+    <rect x="128" y="462" width="218" height="44" rx="9" fill="#101016"/>
+    <circle cx="151" cy="484" r="5" fill="#b09ee0"/>
+    <text x="170" y="489" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="14">Claude Code</text>
+    <rect x="128" y="516" width="218" height="44" rx="9" fill="#101016"/>
+    <circle cx="151" cy="538" r="5" fill="#e0a050"/>
+    <text x="170" y="543" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="14">HER</text>
 
-    <text x="130" y="620" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="1">AI BRIDGE</text>
-    <rect x="128" y="642" width="218" height="92" rx="12" fill="#191721" stroke="#3B3141"/>
-    <text x="150" y="671" fill="#FFB86B" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">npm err!</text>
-    <text x="150" y="695" fill="#CED1E2" font-family="Inter, Arial, sans-serif" font-size="12">Captured failing output</text>
-    <text x="150" y="719" fill="#8F93A8" font-family="Inter, Arial, sans-serif" font-size="12">Attach to Claude Code</text>
+    <text x="130" y="620" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13" letter-spacing="1">AI BRIDGE</text>
+    <rect x="128" y="642" width="218" height="92" rx="12" fill="#1a1a22" stroke="#30303a"/>
+    <text x="150" y="671" fill="#e0a050" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">npm err!</text>
+    <text x="150" y="695" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="12">Captured failing output</text>
+    <text x="150" y="719" fill="#444455" font-family="Inter, Arial, sans-serif" font-size="12">Attach to Claude Code</text>
 
-    <rect x="374" y="200" width="782" height="680" fill="#0B0C10"/>
-    <rect x="404" y="230" width="722" height="286" rx="14" fill="#101119" stroke="#2A2D3B"/>
-    <rect x="404" y="546" width="722" height="286" rx="14" fill="#101119" stroke="#2A2D3B"/>
-    <rect x="404" y="230" width="722" height="42" rx="14" fill="#141520"/>
-    <rect x="404" y="504" width="722" height="12" fill="#101119"/>
-    <rect x="404" y="546" width="722" height="42" rx="14" fill="#141520"/>
-    <rect x="404" y="820" width="722" height="12" fill="#101119"/>
-    <text x="430" y="257" fill="#DADCF1" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Release Shell</text>
-    <text x="430" y="573" fill="#DADCF1" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Verifier</text>
+    <rect x="374" y="200" width="782" height="680" fill="#0e0e10"/>
+    <rect x="404" y="230" width="722" height="286" rx="14" fill="#101016" stroke="#2a2a30"/>
+    <rect x="404" y="546" width="722" height="286" rx="14" fill="#101016" stroke="#2a2a30"/>
+    <rect x="404" y="230" width="722" height="42" rx="14" fill="#13131a"/>
+    <rect x="404" y="504" width="722" height="12" fill="#101016"/>
+    <rect x="404" y="546" width="722" height="42" rx="14" fill="#13131a"/>
+    <rect x="404" y="820" width="722" height="12" fill="#101016"/>
+    <text x="430" y="257" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Release Shell</text>
+    <text x="430" y="573" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Verifier</text>
 
-    <text x="430" y="312" fill="#78E0C7" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ git tag v0.1.0</text>
-    <text x="430" y="342" fill="#78E0C7" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ git push origin v0.1.0</text>
-    <text x="430" y="378" fill="#C6C9DA" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Release workflow started</text>
-    <text x="430" y="408" fill="#5CE1A9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">macOS Apple Silicon complete</text>
-    <text x="430" y="438" fill="#5CE1A9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">macOS Intel complete</text>
-    <text x="430" y="468" fill="#5CE1A9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Linux packages uploaded</text>
-    <text x="430" y="628" fill="#78E0C7" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ npm run build</text>
-    <text x="430" y="662" fill="#C6C9DA" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">2048 modules transformed</text>
-    <text x="430" y="696" fill="#5CE1A9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">TypeScript and Vite build passed</text>
-    <text x="430" y="730" fill="#78E0C7" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ cargo check</text>
-    <text x="430" y="764" fill="#5CE1A9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Rust backend check passed</text>
+    <text x="430" y="312" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ git tag v0.1.0</text>
+    <text x="430" y="342" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ git push origin v0.1.0</text>
+    <text x="430" y="378" fill="#8888a0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Release workflow started</text>
+    <text x="430" y="408" fill="#4db877" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">macOS Apple Silicon complete</text>
+    <text x="430" y="438" fill="#4db877" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">macOS Intel complete</text>
+    <text x="430" y="468" fill="#4db877" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Linux packages uploaded</text>
+    <text x="430" y="628" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ npm run build</text>
+    <text x="430" y="662" fill="#8888a0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">2048 modules transformed</text>
+    <text x="430" y="696" fill="#4db877" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">TypeScript and Vite build passed</text>
+    <text x="430" y="730" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ cargo check</text>
+    <text x="430" y="764" fill="#4db877" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Rust backend check passed</text>
 
-    <rect x="1156" y="200" width="344" height="680" fill="#101119"/>
-    <text x="1192" y="242" fill="#F3F2FF" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800">Claude Code</text>
-    <rect x="1192" y="270" width="272" height="104" rx="14" fill="#171821" stroke="#303348"/>
-    <text x="1216" y="304" fill="#D8DAEA" font-family="Inter, Arial, sans-serif" font-size="13">Explain the failed release job</text>
-    <text x="1216" y="328" fill="#AEB2C8" font-family="Inter, Arial, sans-serif" font-size="13">and patch the workflow.</text>
-    <rect x="1192" y="394" width="272" height="186" rx="14" fill="#151620" stroke="#303348"/>
-    <text x="1216" y="428" fill="#8C7CFF" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Suggested patch</text>
-    <text x="1216" y="462" fill="#D8DAEA" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12">uses:</text>
-    <text x="1216" y="488" fill="#D8DAEA" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12">tauri-apps/tauri-action</text>
-    <text x="1216" y="514" fill="#D8DAEA" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12">@v0.6.2</text>
-    <text x="1216" y="548" fill="#5CE1A9" font-family="Inter, Arial, sans-serif" font-size="13">Ready to run</text>
-    <rect x="1192" y="632" width="272" height="42" rx="10" fill="#1A1C28" stroke="#34374A"/>
-    <text x="1220" y="659" fill="#F4F4FF" font-family="Inter, Arial, sans-serif" font-size="13">Run in terminal</text>
-    <rect x="1192" y="692" width="272" height="42" rx="10" fill="#11121A" stroke="#2D3040"/>
-    <text x="1220" y="719" fill="#CBD0E3" font-family="Inter, Arial, sans-serif" font-size="13">Copy diff</text>
-    <rect x="1192" y="752" width="272" height="42" rx="10" fill="#11121A" stroke="#2D3040"/>
-    <text x="1220" y="779" fill="#CBD0E3" font-family="Inter, Arial, sans-serif" font-size="13">Attach output</text>
+    <rect x="1156" y="200" width="344" height="680" fill="#101016"/>
+    <text x="1192" y="242" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="800">Claude Code</text>
+    <rect x="1192" y="270" width="272" height="104" rx="14" fill="#1a1a22" stroke="#30303a"/>
+    <text x="1216" y="304" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">Explain the failed release job</text>
+    <text x="1216" y="328" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">and patch the workflow.</text>
+    <rect x="1192" y="394" width="272" height="186" rx="14" fill="#1a1a22" stroke="#30303a"/>
+    <text x="1216" y="428" fill="#b09ee0" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Suggested patch</text>
+    <text x="1216" y="462" fill="#e0dff8" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12">uses:</text>
+    <text x="1216" y="488" fill="#e0dff8" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12">tauri-apps/tauri-action</text>
+    <text x="1216" y="514" fill="#e0dff8" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="12">@v0.6.2</text>
+    <text x="1216" y="548" fill="#4db877" font-family="Inter, Arial, sans-serif" font-size="13">Ready to run</text>
+    <rect x="1192" y="632" width="272" height="42" rx="10" fill="#1e1e28" stroke="#30303a"/>
+    <text x="1220" y="659" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">Run in terminal</text>
+    <rect x="1192" y="692" width="272" height="42" rx="10" fill="#101016" stroke="#2a2a30"/>
+    <text x="1220" y="719" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">Copy diff</text>
+    <rect x="1192" y="752" width="272" height="42" rx="10" fill="#101016" stroke="#2a2a30"/>
+    <text x="1220" y="779" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">Attach output</text>
   </g>
 
   <g>
-    <rect x="1048" y="56" width="118" height="34" rx="17" fill="#171821" stroke="#303348"/>
-    <text x="1075" y="78" fill="#DADCF1" font-family="Inter, Arial, sans-serif" font-size="13">SQLite</text>
-    <rect x="1178" y="56" width="112" height="34" rx="17" fill="#171821" stroke="#303348"/>
-    <text x="1203" y="78" fill="#DADCF1" font-family="Inter, Arial, sans-serif" font-size="13">Keychain</text>
-    <rect x="1302" y="56" width="132" height="34" rx="17" fill="#171821" stroke="#303348"/>
-    <text x="1326" y="78" fill="#DADCF1" font-family="Inter, Arial, sans-serif" font-size="13">GitHub CI</text>
+    <rect x="1048" y="56" width="118" height="34" rx="17" fill="#1a1a22" stroke="#30303a"/>
+    <text x="1075" y="78" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">SQLite</text>
+    <rect x="1178" y="56" width="112" height="34" rx="17" fill="#1a1a22" stroke="#30303a"/>
+    <text x="1203" y="78" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">Keychain</text>
+    <rect x="1302" y="56" width="132" height="34" rx="17" fill="#1a1a22" stroke="#30303a"/>
+    <text x="1326" y="78" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">GitHub CI</text>
   </g>
 </svg>

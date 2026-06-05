@@ -3,18 +3,18 @@
   <desc id="desc">A polished desktop terminal interface with terminal panes, AI assistant context, and release platform labels.</desc>
   <defs>
     <linearGradient id="bg" x1="80" y1="40" x2="1520" y2="720" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#0B0C10"/>
-      <stop offset="0.48" stop-color="#13131A"/>
-      <stop offset="1" stop-color="#101822"/>
+      <stop stop-color="#0e0e10"/>
+      <stop offset="0.48" stop-color="#13131a"/>
+      <stop offset="1" stop-color="#16161a"/>
     </linearGradient>
     <linearGradient id="accent" x1="240" y1="118" x2="1340" y2="648" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#78E0C7"/>
-      <stop offset="0.46" stop-color="#8C7CFF"/>
-      <stop offset="1" stop-color="#FFB86B"/>
+      <stop stop-color="#7f77dd"/>
+      <stop offset="0.46" stop-color="#b09ee0"/>
+      <stop offset="1" stop-color="#e0a050"/>
     </linearGradient>
     <linearGradient id="panel" x1="180" y1="150" x2="1420" y2="692" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#171821"/>
-      <stop offset="1" stop-color="#0D0E14"/>
+      <stop stop-color="#1a1a22"/>
+      <stop offset="1" stop-color="#0e0e10"/>
     </linearGradient>
     <filter id="shadow" x="95" y="98" width="1410" height="628" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
       <feFlood flood-opacity="0" result="BackgroundImageFix"/>
@@ -33,70 +33,70 @@
 
   <rect width="1600" height="760" fill="url(#bg)"/>
   <rect x="96" y="72" width="1408" height="616" rx="48" fill="url(#accent)" opacity="0.2"/>
-  <rect x="130" y="114" width="1340" height="584" rx="34" fill="#08090D" opacity="0.8"/>
+  <rect x="130" y="114" width="1340" height="584" rx="34" fill="#0e0e10" opacity="0.8"/>
 
   <g filter="url(#shadow)">
-    <rect x="140" y="136" width="1320" height="540" rx="28" fill="url(#panel)" stroke="#2B2D39"/>
+    <rect x="140" y="136" width="1320" height="540" rx="28" fill="url(#panel)" stroke="#2a2a30"/>
     <g clip-path="url(#windowClip)">
-      <rect x="140" y="136" width="1320" height="52" fill="#101119"/>
-      <circle cx="172" cy="162" r="7" fill="#FF6B6B"/>
-      <circle cx="196" cy="162" r="7" fill="#FFD166"/>
-      <circle cx="220" cy="162" r="7" fill="#5CE1A9"/>
-      <text x="250" y="168" fill="#DCDCF3" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">NeuralTerm</text>
-      <text x="363" y="168" fill="#777A8F" font-family="Inter, Arial, sans-serif" font-size="13">AI-native terminal multiplexer</text>
+      <rect x="140" y="136" width="1320" height="52" fill="#101016"/>
+      <circle cx="172" cy="162" r="7" fill="#e05050"/>
+      <circle cx="196" cy="162" r="7" fill="#e0a050"/>
+      <circle cx="220" cy="162" r="7" fill="#4db877"/>
+      <text x="250" y="168" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">NeuralTerm</text>
+      <text x="363" y="168" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">AI-native terminal multiplexer</text>
 
-      <rect x="140" y="188" width="260" height="488" fill="#0D0E13"/>
-      <text x="166" y="229" fill="#B7BAD0" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Workspaces</text>
-      <rect x="164" y="254" width="208" height="38" rx="8" fill="#1A1B26" stroke="#2C2E3A"/>
-      <text x="184" y="278" fill="#F2F1FF" font-family="Inter, Arial, sans-serif" font-size="14">Default</text>
-      <text x="166" y="333" fill="#7B7E90" font-family="Inter, Arial, sans-serif" font-size="12" letter-spacing="1">SESSIONS</text>
-      <rect x="164" y="354" width="208" height="40" rx="8" fill="#151620"/>
-      <circle cx="184" cy="374" r="5" fill="#5CE1A9"/>
-      <text x="202" y="379" fill="#E7E7F7" font-family="Inter, Arial, sans-serif" font-size="14">Shell 1</text>
-      <rect x="164" y="406" width="208" height="40" rx="8" fill="#11121A"/>
-      <circle cx="184" cy="426" r="5" fill="#8C7CFF"/>
-      <text x="202" y="431" fill="#C7C9D8" font-family="Inter, Arial, sans-serif" font-size="14">Claude Code</text>
-      <rect x="164" y="458" width="208" height="40" rx="8" fill="#11121A"/>
-      <circle cx="184" cy="478" r="5" fill="#FFB86B"/>
-      <text x="202" y="483" fill="#C7C9D8" font-family="Inter, Arial, sans-serif" font-size="14">HER</text>
-      <rect x="164" y="540" width="208" height="44" rx="8" fill="#171821" stroke="#2C2E3A"/>
-      <text x="188" y="568" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="13">+ New session</text>
+      <rect x="140" y="188" width="260" height="488" fill="#16161a"/>
+      <text x="166" y="229" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700">Workspaces</text>
+      <rect x="164" y="254" width="208" height="38" rx="8" fill="#1e1e28" stroke="#2a2a30"/>
+      <text x="184" y="278" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="14">Default</text>
+      <text x="166" y="333" fill="#444455" font-family="Inter, Arial, sans-serif" font-size="12" letter-spacing="1">SESSIONS</text>
+      <rect x="164" y="354" width="208" height="40" rx="8" fill="#1a1a22"/>
+      <circle cx="184" cy="374" r="5" fill="#4db877"/>
+      <text x="202" y="379" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="14">Shell 1</text>
+      <rect x="164" y="406" width="208" height="40" rx="8" fill="#101016"/>
+      <circle cx="184" cy="426" r="5" fill="#b09ee0"/>
+      <text x="202" y="431" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="14">Claude Code</text>
+      <rect x="164" y="458" width="208" height="40" rx="8" fill="#101016"/>
+      <circle cx="184" cy="478" r="5" fill="#e0a050"/>
+      <text x="202" y="483" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="14">HER</text>
+      <rect x="164" y="540" width="208" height="44" rx="8" fill="#1a1a22" stroke="#2a2a30"/>
+      <text x="188" y="568" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">+ New session</text>
 
-      <rect x="400" y="188" width="760" height="488" fill="#0B0C10"/>
-      <rect x="432" y="218" width="696" height="196" rx="12" fill="#101119" stroke="#252835"/>
-      <rect x="432" y="438" width="696" height="196" rx="12" fill="#101119" stroke="#252835"/>
-      <text x="456" y="254" fill="#78E0C7" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="15">$ npm run tauri:build</text>
-      <text x="456" y="286" fill="#BFC2D6" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Compiling Rust backend and desktop shell...</text>
-      <text x="456" y="318" fill="#BFC2D6" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Bundling NeuralTerm for macOS, Windows, Linux</text>
-      <text x="456" y="350" fill="#5CE1A9" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Finished release artifacts</text>
-      <text x="456" y="474" fill="#8C7CFF" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="15">AI Bridge detected failing output</text>
-      <text x="456" y="506" fill="#BFC2D6" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Captured traceback, command, cwd, and context</text>
-      <text x="456" y="538" fill="#BFC2D6" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Attached to Claude Code for repair steps</text>
-      <rect x="456" y="570" width="210" height="32" rx="8" fill="#1A1C28" stroke="#33364A"/>
-      <text x="478" y="591" fill="#F4F4FF" font-family="Inter, Arial, sans-serif" font-size="13">Run fix in terminal</text>
+      <rect x="400" y="188" width="760" height="488" fill="#0e0e10"/>
+      <rect x="432" y="218" width="696" height="196" rx="12" fill="#101016" stroke="#2a2a30"/>
+      <rect x="432" y="438" width="696" height="196" rx="12" fill="#101016" stroke="#2a2a30"/>
+      <text x="456" y="254" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="15">$ npm run tauri:build</text>
+      <text x="456" y="286" fill="#8888a0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Compiling Rust backend and desktop shell...</text>
+      <text x="456" y="318" fill="#8888a0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Bundling NeuralTerm for macOS, Windows, Linux</text>
+      <text x="456" y="350" fill="#4db877" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Finished release artifacts</text>
+      <text x="456" y="474" fill="#b09ee0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="15">AI Bridge detected failing output</text>
+      <text x="456" y="506" fill="#8888a0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Captured traceback, command, cwd, and context</text>
+      <text x="456" y="538" fill="#8888a0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Attached to Claude Code for repair steps</text>
+      <rect x="456" y="570" width="210" height="32" rx="8" fill="#1e1e28" stroke="#30303a"/>
+      <text x="478" y="591" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">Run fix in terminal</text>
 
-      <rect x="1160" y="188" width="300" height="488" fill="#101119"/>
-      <text x="1190" y="229" fill="#F2F1FF" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">Claude Code</text>
-      <rect x="1190" y="254" width="238" height="92" rx="12" fill="#171821" stroke="#2D3040"/>
-      <text x="1210" y="286" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="13">Ready for code, diffs,</text>
-      <text x="1210" y="310" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="13">files, and shell output.</text>
-      <rect x="1190" y="366" width="238" height="116" rx="12" fill="#151720" stroke="#2D3040"/>
-      <text x="1210" y="398" fill="#F3F2FF" font-family="Inter, Arial, sans-serif" font-size="13">/attach src-tauri/src/pty.rs</text>
-      <text x="1210" y="424" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="13">Review PTY bridge logic</text>
-      <text x="1210" y="450" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="13">and propose a patch.</text>
-      <rect x="1190" y="532" width="238" height="40" rx="10" fill="#1C1E2A" stroke="#34374A"/>
-      <text x="1214" y="558" fill="#D9DAEA" font-family="Inter, Arial, sans-serif" font-size="13">Anthropic key in Keychain</text>
+      <rect x="1160" y="188" width="300" height="488" fill="#101016"/>
+      <text x="1190" y="229" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="16" font-weight="700">Claude Code</text>
+      <rect x="1190" y="254" width="238" height="92" rx="12" fill="#1a1a22" stroke="#2a2a30"/>
+      <text x="1210" y="286" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">Ready for code, diffs,</text>
+      <text x="1210" y="310" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">files, and shell output.</text>
+      <rect x="1190" y="366" width="238" height="116" rx="12" fill="#1a1a22" stroke="#2a2a30"/>
+      <text x="1210" y="398" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">/attach src-tauri/src/pty.rs</text>
+      <text x="1210" y="424" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">Review PTY bridge logic</text>
+      <text x="1210" y="450" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="13">and propose a patch.</text>
+      <rect x="1190" y="532" width="238" height="40" rx="10" fill="#1e1e28" stroke="#30303a"/>
+      <text x="1214" y="558" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">Anthropic key in Keychain</text>
     </g>
   </g>
 
-  <text x="140" y="66" fill="#F7F7FF" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="800">NeuralTerm</text>
-  <text x="410" y="66" fill="#BFC2D6" font-family="Inter, Arial, sans-serif" font-size="22">terminal multiplexing, AI sessions, and release automation in one desktop app</text>
+  <text x="140" y="66" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="48" font-weight="800">NeuralTerm</text>
+  <text x="410" y="66" fill="#8888a0" font-family="Inter, Arial, sans-serif" font-size="22">terminal multiplexing, AI sessions, and release automation in one desktop app</text>
   <g>
-    <rect x="1120" y="42" width="92" height="34" rx="17" fill="#171821" stroke="#303348"/>
-    <text x="1143" y="64" fill="#DADCF1" font-family="Inter, Arial, sans-serif" font-size="13">macOS</text>
-    <rect x="1224" y="42" width="104" height="34" rx="17" fill="#171821" stroke="#303348"/>
-    <text x="1248" y="64" fill="#DADCF1" font-family="Inter, Arial, sans-serif" font-size="13">Windows</text>
-    <rect x="1340" y="42" width="88" height="34" rx="17" fill="#171821" stroke="#303348"/>
-    <text x="1365" y="64" fill="#DADCF1" font-family="Inter, Arial, sans-serif" font-size="13">Linux</text>
+    <rect x="1120" y="42" width="92" height="34" rx="17" fill="#1a1a22" stroke="#30303a"/>
+    <text x="1143" y="64" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">macOS</text>
+    <rect x="1224" y="42" width="104" height="34" rx="17" fill="#1a1a22" stroke="#30303a"/>
+    <text x="1248" y="64" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">Windows</text>
+    <rect x="1340" y="42" width="88" height="34" rx="17" fill="#1a1a22" stroke="#30303a"/>
+    <text x="1365" y="64" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13">Linux</text>
   </g>
 </svg>
