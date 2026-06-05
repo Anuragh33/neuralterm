@@ -9,6 +9,16 @@ const sessions = [
   ['verifier', 'watching', 'cargo check'],
 ];
 
+const releaseTargets = [
+  'macOS Apple Silicon',
+  'macOS Intel',
+  'Windows EXE',
+  'Windows MSI',
+  'Linux AppImage',
+  'DEB',
+  'RPM',
+];
+
 const shellLines = [
   ['$', 'git tag v0.1.0'],
   ['$', 'git push origin v0.1.0'],
@@ -16,6 +26,12 @@ const shellLines = [
   ['ok', 'macOS Apple Silicon DMG uploaded'],
   ['ok', 'Windows MSI and setup EXE uploaded'],
   ['ok', 'Linux AppImage, DEB, and RPM uploaded'],
+];
+
+const releaseProgress = [
+  ['macOS', '100'],
+  ['Windows', '100'],
+  ['Linux', '100'],
 ];
 
 const bridgeEvents = [
@@ -97,7 +113,8 @@ export default function Home() {
             <section className="workspace-main" aria-labelledby="hero-title">
               <div className="hero-command">
                 <p className="prompt-line">
-                  <span>$</span> neuralterm --workspace release-lab --ai-bridge
+                  <span>$</span>{' '}
+                  <code className="typed-command">neuralterm --workspace release-lab --ai-bridge</code>
                 </p>
                 <h1 id="hero-title">A terminal workspace built for AI-assisted shipping.</h1>
                 <p>
@@ -132,6 +149,15 @@ export default function Home() {
                       <code>npm run site:build</code>
                       <i aria-hidden="true" />
                     </p>
+                  </div>
+                  <div className="release-progress" aria-label="Release build progress">
+                    {releaseProgress.map(([target, progress]) => (
+                      <div className="progress-row" key={target}>
+                        <span>{target}</span>
+                        <i data-progress={progress} />
+                        <strong>{progress}%</strong>
+                      </div>
+                    ))}
                   </div>
                 </article>
 
@@ -171,13 +197,11 @@ export default function Home() {
         </section>
 
         <section className="platform-strip" aria-label="Available release targets">
-          <span>macOS Apple Silicon</span>
-          <span>macOS Intel</span>
-          <span>Windows EXE</span>
-          <span>Windows MSI</span>
-          <span>Linux AppImage</span>
-          <span>DEB</span>
-          <span>RPM</span>
+          <div className="platform-track" aria-hidden="true">
+            {[...releaseTargets, ...releaseTargets].map((target, index) => (
+              <span key={`${target}-${index}`}>{target}</span>
+            ))}
+          </div>
         </section>
 
         <section id="workflow" className="workflow-section section-pad">
