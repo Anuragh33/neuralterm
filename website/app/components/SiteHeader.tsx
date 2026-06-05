@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 
 const navItems = [
-  { href: '#features', label: 'Features' },
-  { href: '#bridge', label: 'AI Bridge' },
-  { href: '#architecture', label: 'Architecture' },
-  { href: '#download', label: 'Download' },
+  { href: '#features', label: 'ls features' },
+  { href: '#bridge', label: 'tail bridge.log' },
+  { href: '#architecture', label: 'cat stack' },
+  { href: '#download', label: './download' },
 ];
 
 export function SiteHeader() {
@@ -29,7 +29,7 @@ export function SiteHeader() {
     <header className="site-header" data-scrolled={scrolled || undefined}>
       <a className="brand" href="#top" aria-label="NeuralTerm home" onClick={() => setNavOpen(false)}>
         <img src="/images/icon.png" alt="" />
-        <span>NeuralTerm</span>
+        <span>neuralterm@desktop:~$</span>
       </a>
       <button
         className="nav-toggle"
@@ -52,7 +52,7 @@ export function SiteHeader() {
           href="https://github.com/Anuragh33/neuralterm/releases/tag/v0.1.0"
           onClick={() => setNavOpen(false)}
         >
-          Get v0.1.0
+          curl v0.1.0
         </a>
       </nav>
     </header>

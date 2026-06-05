@@ -54,41 +54,78 @@ const architecture = [
   ['GitHub Releases', 'Matrix builds produce release assets for each desktop platform.'],
 ];
 
+const terminalLines = [
+  ['$', 'neuralterm --launch workspace'],
+  ['ok', 'spawned real PTY session through Rust backend'],
+  ['ok', 'restored workspaces, splits, and AI message history'],
+  ['watch', 'AI Bridge is scanning terminal output'],
+  ['fix', 'Claude Code can receive failing command context'],
+  ['ship', 'macOS, Windows, and Linux assets published'],
+];
+
 export default function Home() {
   return (
     <>
       <SiteHeader />
       <main id="top">
-        <section className="hero" aria-labelledby="hero-title">
-          <div className="hero-bg" aria-hidden="true" />
-          <div className="hero-overlay" aria-hidden="true" />
-          <div className="hero-content">
-            <p className="eyebrow">Desktop terminal workspace for macOS, Windows, and Linux</p>
-            <h1 id="hero-title">An AI-native terminal that keeps the repair loop in one place.</h1>
-            <p className="hero-copy">
-              NeuralTerm combines real PTY-backed terminals, split panes, persistent workspaces,
-              Claude Code sessions, HER, and AI Bridge error capture in a focused Tauri desktop app.
-            </p>
-            <div className="hero-actions" aria-label="Primary actions">
-              <a className="button primary" href={releaseUrl}>
-                Download release
-              </a>
-              <a className="button secondary" href="#tour">
-                Explore the workflow
-              </a>
+        <section className="hero terminal-hero" aria-labelledby="hero-title">
+          <div className="terminal-noise" aria-hidden="true" />
+          <div className="terminal-stage">
+            <div className="terminal-titlebar" aria-hidden="true">
+              <span className="window-dot red-dot" />
+              <span className="window-dot amber-dot" />
+              <span className="window-dot green-dot" />
+              <span className="terminal-path">~/neuralterm</span>
+            </div>
+            <div className="terminal-hero-grid">
+              <div className="hero-content">
+                <p className="command-line">
+                  <span>$</span> neuralterm --explain
+                </p>
+                <h1 id="hero-title">A responsive terminal for the AI repair loop.</h1>
+                <p className="hero-copy">
+                  NeuralTerm is a desktop terminal multiplexer with real PTYs, split panes,
+                  persistent workspaces, Claude Code sessions, HER, and AI Bridge context capture.
+                </p>
+                <div className="hero-actions" aria-label="Primary actions">
+                  <a className="button primary" href={releaseUrl}>
+                    ./download-v0.1.0
+                  </a>
+                  <a className="button secondary" href="#tour">
+                    less workflow.md
+                  </a>
+                </div>
+              </div>
+              <div className="hero-terminal" aria-label="NeuralTerm status output">
+                <div className="terminal-output">
+                  {terminalLines.map(([label, text]) => (
+                    <p key={`${label}-${text}`}>
+                      <span className={`line-label label-${label.replace('$', 'prompt')}`}>
+                        {label}
+                      </span>
+                      <span>{text}</span>
+                    </p>
+                  ))}
+                  <p className="cursor-line">
+                    <span className="line-label">run</span>
+                    <span>npm run tauri:dev</span>
+                    <span className="cursor" />
+                  </p>
+                </div>
+              </div>
             </div>
             <dl className="hero-stats" aria-label="Project status">
               <div>
-                <dt>Release</dt>
+                <dt>release</dt>
                 <dd>v0.1.0</dd>
               </div>
               <div>
-                <dt>Platforms</dt>
-                <dd>3</dd>
+                <dt>targets</dt>
+                <dd>mac win linux</dd>
               </div>
               <div>
-                <dt>Runtime</dt>
-                <dd>Tauri v2</dd>
+                <dt>runtime</dt>
+                <dd>tauri v2</dd>
               </div>
             </dl>
           </div>
@@ -104,7 +141,7 @@ export default function Home() {
 
         <section id="tour" className="showcase section-pad">
           <div className="section-heading">
-            <p className="eyebrow">Product tour</p>
+            <p className="eyebrow">$ less workflow.md</p>
             <h2>Terminal, assistant, and build context share the same workspace.</h2>
             <p>
               Shell sessions, AI sessions, and bridge alerts use the same session model. That makes
@@ -112,7 +149,8 @@ export default function Home() {
               exact terminal context.
             </p>
           </div>
-          <figure className="workspace-preview">
+          <figure className="workspace-preview terminal-frame">
+            <figcaption>neuralterm workspace preview</figcaption>
             <img
               src="/images/neuralterm-workspace.svg"
               alt="NeuralTerm workspace preview with sidebar, split terminals, and AI panel"
@@ -122,14 +160,14 @@ export default function Home() {
 
         <section id="features" className="features section-pad">
           <div className="section-heading narrow">
-            <p className="eyebrow">Feature set</p>
+            <p className="eyebrow">$ ls features</p>
             <h2>Built like a terminal first, then extended where AI actually helps.</h2>
           </div>
           <div className="feature-grid">
             {features.map((feature) => (
               <article className="feature-card" key={feature.title}>
                 <span className={`feature-mark ${feature.mark}`} />
-                <h3>{feature.title}</h3>
+                <h3>./{feature.title.toLowerCase().replaceAll(' ', '-')}</h3>
                 <p>{feature.body}</p>
               </article>
             ))}
@@ -138,7 +176,7 @@ export default function Home() {
 
         <section id="bridge" className="bridge section-pad">
           <div className="bridge-copy">
-            <p className="eyebrow">AI Bridge</p>
+            <p className="eyebrow">$ tail -f ai-bridge.log</p>
             <h2>When the terminal fails, the assistant gets the useful part.</h2>
             <p>
               AI Bridge watches terminal output for tracebacks, panics, npm errors, permission
@@ -153,19 +191,19 @@ export default function Home() {
           </div>
           <div className="bridge-panel" aria-label="AI Bridge flow">
             <div className="flow-step">
-              <span>1</span>
+              <span>01</span>
               <strong>Terminal output</strong>
               <p>Build, test, git, and runtime logs stream through the PTY reader.</p>
             </div>
             <div className="flow-connector" />
             <div className="flow-step">
-              <span>2</span>
+              <span>02</span>
               <strong>Pattern detection</strong>
               <p>Errors and failure text are throttled into concise suggestions.</p>
             </div>
             <div className="flow-connector" />
             <div className="flow-step">
-              <span>3</span>
+              <span>03</span>
               <strong>AI context</strong>
               <p>Claude Code opens with the captured terminal context attached.</p>
             </div>
@@ -174,7 +212,7 @@ export default function Home() {
 
         <section id="architecture" className="architecture section-pad">
           <div className="section-heading">
-            <p className="eyebrow">Architecture</p>
+            <p className="eyebrow">$ cat stack.json</p>
             <h2>Small pieces, clear boundaries.</h2>
           </div>
           <div className="architecture-grid">
@@ -189,14 +227,14 @@ export default function Home() {
 
         <section id="download" className="download section-pad">
           <div className="download-copy">
-            <p className="eyebrow">Get the app</p>
+            <p className="eyebrow">$ ./download</p>
             <h2>Download NeuralTerm v0.1.0.</h2>
             <p>
               The first release is published with macOS, Windows, and Linux assets. Signing and
               notarization are still pending, so operating systems may show trust warnings.
             </p>
             <a className="button primary" href={releaseUrl}>
-              Open GitHub release
+              open github release
             </a>
           </div>
           <div className="download-table" role="table" aria-label="Release assets">
