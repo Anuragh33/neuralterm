@@ -152,6 +152,17 @@ npm run tauri:build
 
 The dev server uses `http://127.0.0.1:1421/`.
 
+## Project Website
+
+The project website is a Next.js app under `website/`.
+
+```bash
+npm run site:dev
+npm run site:build
+```
+
+The website dev server uses `http://127.0.0.1:4321/`.
+
 ## AI Setup
 
 1. Open Settings in the app.
