@@ -46,9 +46,15 @@ body {
     34px 34px,
     auto,
     auto;
+  background-position:
+    0 0,
+    0 0,
+    0 0,
+    0 0;
   color: var(--text);
   font-family: var(--sans);
   line-height: 1.5;
+  animation: grid-drift 34s linear infinite;
 }
 
 body.nav-open {
@@ -201,11 +207,26 @@ h3 {
 }
 
 .operator-hero {
+  position: relative;
   min-height: 100svh;
+  overflow: hidden;
   padding: 92px 22px 28px;
 }
 
+.operator-hero::before {
+  position: absolute;
+  inset: 68px 0 auto;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(127, 119, 221, 0.62), transparent);
+  content: "";
+  opacity: 0.72;
+  pointer-events: none;
+  transform: translateX(-100%);
+  animation: hero-scan 4.8s ease-in-out infinite;
+}
+
 .console-shell {
+  position: relative;
   display: grid;
   grid-template-columns: 248px minmax(0, 1fr) 316px;
   width: min(1480px, 100%);
@@ -220,6 +241,19 @@ h3 {
   box-shadow:
     0 32px 100px rgba(0, 0, 0, 0.42),
     0 0 70px rgba(127, 119, 221, 0.1);
+  animation: console-enter 720ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.console-shell::after {
+  position: absolute;
+  inset: 44px 0 0;
+  z-index: 2;
+  background: linear-gradient(rgba(127, 119, 221, 0.035) 1px, transparent 1px);
+  background-size: 100% 5px;
+  content: "";
+  opacity: 0.28;
+  pointer-events: none;
+  animation: scanline-shift 7s linear infinite;
 }
 
 .console-titlebar {
@@ -264,6 +298,7 @@ h3 {
 
 .green-dot {
   background: var(--green);
+  animation: status-pulse 2.8s ease-in-out infinite;
 }
 
 .workspace-rail {
@@ -317,11 +352,35 @@ h3 {
   border-radius: 8px;
   padding: 10px;
   background: rgba(16, 16, 22, 0.62);
+  animation: row-enter 520ms ease both;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.session-row:nth-child(2) {
+  animation-delay: 90ms;
+}
+
+.session-row:nth-child(3) {
+  animation-delay: 180ms;
+}
+
+.session-row:nth-child(4) {
+  animation-delay: 270ms;
+}
+
+.session-row:hover {
+  transform: translateX(3px);
 }
 
 .session-row[data-state="active"] {
   border-color: rgba(127, 119, 221, 0.48);
   background: rgba(30, 30, 40, 0.94);
+  animation:
+    row-enter 520ms ease both,
+    active-session 3.4s ease-in-out 600ms infinite;
 }
 
 .session-row > span {
@@ -396,6 +455,17 @@ h3 {
   overflow-wrap: anywhere;
 }
 
+.prompt-line::after {
+  display: inline-block;
+  width: 8px;
+  height: 1.08em;
+  margin-left: 8px;
+  background: var(--terminal);
+  content: "";
+  vertical-align: -0.16em;
+  animation: blink 1s steps(1) infinite;
+}
+
 .prompt-line span {
   color: var(--dim);
 }
@@ -403,6 +473,11 @@ h3 {
 .hero-command h1,
 .hero-command p:not(.prompt-line) {
   min-width: 0;
+  animation: content-rise 620ms ease both;
+}
+
+.hero-command h1 {
+  animation-delay: 110ms;
 }
 
 .hero-command p:not(.prompt-line) {
@@ -410,6 +485,7 @@ h3 {
   margin-bottom: 0;
   color: var(--muted);
   font-size: 18px;
+  animation-delay: 210ms;
 }
 
 .hero-actions {
@@ -418,6 +494,7 @@ h3 {
   justify-content: flex-start;
   gap: 10px;
   margin-top: 4px;
+  animation: content-rise 620ms ease 310ms both;
 }
 
 .button {
@@ -432,7 +509,8 @@ h3 {
   transition:
     transform 160ms ease,
     border-color 160ms ease,
-    background 160ms ease;
+    background 160ms ease,
+    box-shadow 160ms ease;
 }
 
 .button:hover {
@@ -442,7 +520,9 @@ h3 {
 .button.primary {
   border: 1px solid rgba(127, 119, 221, 0.72);
   background: var(--terminal);
+  box-shadow: 0 0 24px rgba(127, 119, 221, 0.18);
   color: var(--bright);
+  animation: cta-glow 3.2s ease-in-out infinite;
 }
 
 .button.secondary {
@@ -471,6 +551,11 @@ h3 {
 .terminal-pane {
   min-width: 0;
   overflow: hidden;
+  animation: panel-enter 660ms ease both;
+}
+
+.terminal-pane:nth-child(2) {
+  animation-delay: 140ms;
 }
 
 .primary-pane {
@@ -515,6 +600,37 @@ h3 {
   grid-template-columns: 44px minmax(0, 1fr) auto;
   gap: 12px;
   margin: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  animation: line-reveal 460ms ease forwards;
+}
+
+.terminal-lines p:nth-child(1) {
+  animation-delay: 220ms;
+}
+
+.terminal-lines p:nth-child(2) {
+  animation-delay: 330ms;
+}
+
+.terminal-lines p:nth-child(3) {
+  animation-delay: 440ms;
+}
+
+.terminal-lines p:nth-child(4) {
+  animation-delay: 550ms;
+}
+
+.terminal-lines p:nth-child(5) {
+  animation-delay: 660ms;
+}
+
+.terminal-lines p:nth-child(6) {
+  animation-delay: 770ms;
+}
+
+.terminal-lines p:nth-child(7) {
+  animation-delay: 880ms;
 }
 
 .terminal-lines span {
@@ -550,6 +666,152 @@ h3 {
   }
 }
 
+@keyframes grid-drift {
+  to {
+    background-position:
+      34px 34px,
+      -34px 34px,
+      4% 2%,
+      96% 18%;
+  }
+}
+
+@keyframes hero-scan {
+  0%,
+  28% {
+    transform: translateX(-100%);
+  }
+
+  58%,
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes console-enter {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes scanline-shift {
+  to {
+    background-position-y: 120px;
+  }
+}
+
+@keyframes status-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 rgba(77, 184, 119, 0);
+  }
+
+  50% {
+    box-shadow: 0 0 16px rgba(77, 184, 119, 0.5);
+  }
+}
+
+@keyframes active-session {
+  0%,
+  100% {
+    box-shadow: inset 0 0 0 rgba(127, 119, 221, 0);
+  }
+
+  50% {
+    box-shadow: inset 0 0 28px rgba(127, 119, 221, 0.12);
+  }
+}
+
+@keyframes row-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes content-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes panel-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes line-reveal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes log-reveal {
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes dock-message {
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes cta-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 22px rgba(127, 119, 221, 0.18);
+  }
+
+  50% {
+    box-shadow: 0 0 34px rgba(127, 119, 221, 0.34);
+  }
+}
+
+@keyframes target-pulse {
+  0%,
+  100% {
+    color: var(--muted);
+  }
+
+  50% {
+    color: var(--text);
+  }
+}
+
 .mini-log {
   display: grid;
   gap: 10px;
@@ -559,6 +821,21 @@ h3 {
 .mini-log div {
   border-left: 2px solid var(--terminal);
   padding-left: 12px;
+  opacity: 0;
+  transform: translateX(-6px);
+  animation: log-reveal 500ms ease forwards;
+}
+
+.mini-log div:nth-child(1) {
+  animation-delay: 420ms;
+}
+
+.mini-log div:nth-child(2) {
+  animation-delay: 560ms;
+}
+
+.mini-log div:nth-child(3) {
+  animation-delay: 700ms;
 }
 
 .mini-log strong {
@@ -601,6 +878,11 @@ h3 {
   border-radius: 8px;
   padding: 13px;
   background: var(--panel);
+  animation: dock-message 580ms ease both;
+}
+
+.assistant-message:nth-of-type(2) {
+  animation-delay: 180ms;
 }
 
 .assistant-message span,
@@ -649,6 +931,15 @@ h3 {
 .platform-strip span {
   flex: 0 0 auto;
   white-space: nowrap;
+  animation: target-pulse 5s ease-in-out infinite;
+}
+
+.platform-strip span:nth-child(2n) {
+  animation-delay: 900ms;
+}
+
+.platform-strip span:nth-child(3n) {
+  animation-delay: 1.8s;
 }
 
 .platform-strip span::before {
@@ -720,10 +1011,18 @@ h3 {
   gap: 16px;
   border-bottom: 1px solid var(--line);
   padding: 15px 16px;
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
 }
 
 .palette-row:last-child {
   border-bottom: 0;
+}
+
+.palette-row:hover {
+  background: rgba(127, 119, 221, 0.08);
+  transform: translateX(3px);
 }
 
 .palette-row code {
@@ -751,6 +1050,24 @@ h3 {
 .bridge-stream p {
   margin: 0;
   overflow-wrap: anywhere;
+  opacity: 0;
+  animation: line-reveal 440ms ease forwards;
+}
+
+.bridge-stream p:nth-child(1) {
+  animation-delay: 160ms;
+}
+
+.bridge-stream p:nth-child(2) {
+  animation-delay: 280ms;
+}
+
+.bridge-stream p:nth-child(3) {
+  animation-delay: 400ms;
+}
+
+.bridge-stream p:nth-child(4) {
+  animation-delay: 520ms;
 }
 
 .bridge-stream span {
@@ -774,6 +1091,16 @@ h3 {
 .feature-card {
   min-height: 214px;
   padding: 22px;
+  transition:
+    border-color 180ms ease,
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.feature-card:hover {
+  border-color: rgba(127, 119, 221, 0.48);
+  background: rgba(30, 30, 40, 0.86);
+  transform: translateY(-4px);
 }
 
 .feature-card span {
@@ -835,6 +1162,15 @@ h3 {
   border-radius: 8px;
   background: var(--panel);
   box-shadow: 0 30px 90px rgba(0, 0, 0, 0.34);
+  animation: panel-enter 660ms ease both;
+}
+
+.workspace-preview img {
+  transition: transform 500ms ease;
+}
+
+.workspace-preview:hover img {
+  transform: scale(1.015);
 }
 
 .workspace-preview figcaption {
@@ -868,6 +1204,14 @@ h3 {
   gap: 8px;
   padding: 18px;
   background: rgba(26, 26, 34, 0.92);
+  transition:
+    background 180ms ease,
+    transform 180ms ease;
+}
+
+.stack-map div:hover {
+  background: rgba(30, 30, 40, 0.96);
+  transform: translateY(-2px);
 }
 
 .stack-map strong {
@@ -1103,5 +1447,32 @@ h3 {
     align-items: flex-start;
     flex-direction: column;
     padding: 30px 18px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .console-shell,
+  .session-row,
+  .hero-command h1,
+  .hero-command p:not(.prompt-line),
+  .hero-actions,
+  .terminal-pane,
+  .terminal-lines p,
+  .mini-log div,
+  .assistant-message,
+  .bridge-stream p,
+  .workspace-preview {
+    opacity: 1 !important;
+    transform: none !important;
   }
 }
