@@ -16,7 +16,9 @@
   <img alt="Platforms" src="https://img.shields.io/badge/macOS%20%7C%20Windows%20%7C%20Linux-ready-7F77DD?style=for-the-badge">
 </p>
 
-![NeuralTerm hero](docs/images/neuralterm-hero.svg)
+<p align="center">
+  <img src="docs/images/neuralterm-hero.svg" width="100%" alt="NeuralTerm terminal workspace preview">
+</p>
 
 ## What Is NeuralTerm?
 
@@ -44,7 +46,9 @@ The current release artifacts are unsigned. macOS Gatekeeper and Windows SmartSc
 
 ## Preview
 
-![NeuralTerm workspace preview](docs/images/neuralterm-workspace.svg)
+<p align="center">
+  <img src="docs/images/neuralterm-workspace.svg" width="100%" alt="NeuralTerm workspace preview with sidebar, split terminals, and AI panel">
+</p>
 
 ## Highlights
 
