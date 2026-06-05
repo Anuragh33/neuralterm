@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 
 const navItems = [
+  { href: '#workflow', label: 'open workflow' },
   { href: '#features', label: 'ls features' },
-  { href: '#bridge', label: 'tail bridge.log' },
+  { href: '#preview', label: 'preview ui' },
   { href: '#architecture', label: 'cat stack' },
   { href: '#download', label: './download' },
 ];

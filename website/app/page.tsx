@@ -2,65 +2,58 @@ import { SiteHeader } from './components/SiteHeader';
 
 const releaseUrl = 'https://github.com/Anuragh33/neuralterm/releases/tag/v0.1.0';
 
-const platforms = [
-  'Apple Silicon DMG',
-  'Intel Mac DMG',
-  'Windows EXE',
-  'Windows MSI',
-  'Linux AppImage',
-  'Debian package',
-  'RPM package',
+const sessions = [
+  ['release-shell', 'running', 'npm run tauri:build'],
+  ['claude-code', 'active', 'review failing job'],
+  ['her-voice', 'idle', 'ready for prompt'],
+  ['verifier', 'watching', 'cargo check'],
+];
+
+const shellLines = [
+  ['$', 'git tag v0.1.0'],
+  ['$', 'git push origin v0.1.0'],
+  ['ok', 'release workflow started on GitHub Actions'],
+  ['ok', 'macOS Apple Silicon DMG uploaded'],
+  ['ok', 'Windows MSI and setup EXE uploaded'],
+  ['ok', 'Linux AppImage, DEB, and RPM uploaded'],
+];
+
+const bridgeEvents = [
+  ['traceback', 'Captured failing command, cwd, and stderr excerpt.'],
+  ['attach', 'Sent compact terminal context into Claude Code.'],
+  ['repair', 'Suggested patch can run back inside the terminal.'],
+];
+
+const commandPalette = [
+  ['/new shell', 'Create a persistent PTY session'],
+  ['/split vertical', 'Keep logs beside the active prompt'],
+  ['/attach error', 'Send bridge context to Claude Code'],
+  ['/release v0.1.0', 'Open the GitHub release assets'],
 ];
 
 const features = [
-  {
-    mark: 'terminal-mark',
-    title: 'Real PTY terminals',
-    body: 'Rust backend commands spawn, resize, write to, and kill shell sessions through portable-pty.',
-  },
-  {
-    mark: 'split-mark',
-    title: 'Split-pane flow',
-    body: 'Horizontal and vertical splits keep build commands, logs, and verification shells visible together.',
-  },
-  {
-    mark: 'workspace-mark',
-    title: 'Persistent workspaces',
-    body: 'SQLite stores workspaces, sessions, collapsed state, activity, and AI message history.',
-  },
-  {
-    mark: 'ai-mark',
-    title: 'Claude Code and HER',
-    body: 'AI panes support markdown, attachments, shell helpers, voice input, and run-in-terminal code blocks.',
-  },
-  {
-    mark: 'key-mark',
-    title: 'Keychain storage',
-    body: 'Anthropic credentials live in the OS keychain in the desktop app, with browser fallback for preview mode.',
-  },
-  {
-    mark: 'release-mark',
-    title: 'Release automation',
-    body: 'Version tags trigger macOS, Windows, and Linux builds through GitHub Actions and Tauri bundling.',
-  },
+  ['PTY core', 'Real shell sessions through portable-pty with resize, write, kill, and event streaming.'],
+  ['Workspace memory', 'SQLite keeps workspaces, sessions, splits, collapsed state, and AI message history durable.'],
+  ['AI panes', 'Claude Code and HER panes support markdown, attachments, voice input, and run-in-terminal actions.'],
+  ['Bridge watcher', 'Terminal failures become compact AI suggestions instead of manually copied log chunks.'],
+  ['Keychain storage', 'Anthropic credentials live in the OS keychain in the packaged desktop app.'],
+  ['Release matrix', 'GitHub Actions builds macOS, Windows, and Linux artifacts for versioned releases.'],
 ];
 
-const architecture = [
-  ['React UI', 'Top bar, sidebar, command palette, settings, terminals, and AI panes.'],
-  ['Zustand state', 'Sessions, workspaces, splits, settings, and bridge suggestions.'],
-  ['Tauri commands', 'IPC layer for persistence, PTY lifecycle, shell helpers, and keychain access.'],
-  ['Rust backend', 'portable-pty, sqlx, keyring, tokio, and event emission.'],
-  ['SQLite', 'Durable app state in the platform app data directory.'],
-  ['GitHub Releases', 'Matrix builds produce release assets for each desktop platform.'],
+const stack = [
+  ['React', 'interface'],
+  ['Zustand', 'state'],
+  ['Tauri v2', 'desktop shell'],
+  ['Rust', 'backend'],
+  ['SQLite', 'storage'],
+  ['GitHub', 'releases'],
 ];
 
-const terminalLines = [
-  ['$', 'neuralterm --launch workspace'],
-  ['ok', 'spawned real PTY session through Rust backend'],
-  ['ok', 'restored workspaces, splits, and AI message history'],
-  ['watch', 'AI Bridge is scanning terminal output'],
-  ['fix', 'Claude Code can receive failing command context'],
-  ['ship', 'macOS, Windows, and Linux assets published'],
+const downloads = [
+  ['macOS', 'Apple Silicon DMG, Intel DMG'],
+  ['Windows', 'Setup EXE, MSI'],
+  ['Linux', 'AppImage, DEB, RPM'],
+  ['Source', 'GitHub repository and release tag'],
 ];
 
 export default function Home() {
@@ -68,88 +61,195 @@ export default function Home() {
     <>
       <SiteHeader />
       <main id="top">
-        <section className="hero terminal-hero" aria-labelledby="hero-title">
-          <div className="terminal-noise" aria-hidden="true" />
-          <div className="terminal-stage">
-            <div className="terminal-titlebar" aria-hidden="true">
+        <section className="operator-hero" aria-labelledby="hero-title">
+          <div className="console-shell" aria-label="NeuralTerm interface concept">
+            <div className="console-titlebar">
               <span className="window-dot red-dot" />
               <span className="window-dot amber-dot" />
               <span className="window-dot green-dot" />
-              <span className="terminal-path">~/neuralterm</span>
+              <strong>neuralterm</strong>
+              <span>release-lab.local</span>
             </div>
-            <div className="terminal-hero-grid">
-              <div className="hero-content">
-                <p className="command-line">
-                  <span>$</span> neuralterm --explain
+
+            <aside className="workspace-rail" aria-label="Workspace sessions">
+              <div className="rail-block">
+                <p className="rail-label">workspace</p>
+                <strong>release-lab</strong>
+                <span>AI terminal ops</span>
+              </div>
+              <div className="session-list">
+                {sessions.map(([name, state, detail]) => (
+                  <div className="session-row" data-state={state} key={name}>
+                    <span aria-hidden="true" />
+                    <div>
+                      <strong>{name}</strong>
+                      <small>{detail}</small>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="rail-meter">
+                <span>bridge</span>
+                <strong>watching</strong>
+              </div>
+            </aside>
+
+            <section className="workspace-main" aria-labelledby="hero-title">
+              <div className="hero-command">
+                <p className="prompt-line">
+                  <span>$</span> neuralterm --workspace release-lab --ai-bridge
                 </p>
-                <h1 id="hero-title">A responsive terminal for the AI repair loop.</h1>
-                <p className="hero-copy">
-                  NeuralTerm is a desktop terminal multiplexer with real PTYs, split panes,
-                  persistent workspaces, Claude Code sessions, HER, and AI Bridge context capture.
+                <h1 id="hero-title">A terminal workspace built for AI-assisted shipping.</h1>
+                <p>
+                  NeuralTerm combines real PTYs, split panes, persistent workspaces, Claude Code,
+                  HER, and failure-aware terminal context in one desktop app.
                 </p>
                 <div className="hero-actions" aria-label="Primary actions">
                   <a className="button primary" href={releaseUrl}>
                     ./download-v0.1.0
                   </a>
-                  <a className="button secondary" href="#tour">
-                    less workflow.md
+                  <a className="button secondary" href="#workflow">
+                    open workflow
                   </a>
                 </div>
               </div>
-              <div className="hero-terminal" aria-label="NeuralTerm status output">
-                <div className="terminal-output">
-                  {terminalLines.map(([label, text]) => (
-                    <p key={`${label}-${text}`}>
-                      <span className={`line-label label-${label.replace('$', 'prompt')}`}>
-                        {label}
-                      </span>
-                      <span>{text}</span>
+
+              <div className="pane-grid">
+                <article className="terminal-pane primary-pane">
+                  <div className="pane-title">
+                    <span>release-shell</span>
+                    <small>zsh</small>
+                  </div>
+                  <div className="terminal-lines">
+                    {shellLines.map(([label, line]) => (
+                      <p key={`${label}-${line}`} data-label={label}>
+                        <span>{label}</span>
+                        <code>{line}</code>
+                      </p>
+                    ))}
+                    <p data-label="run">
+                      <span>run</span>
+                      <code>npm run site:build</code>
+                      <i aria-hidden="true" />
                     </p>
-                  ))}
-                  <p className="cursor-line">
-                    <span className="line-label">run</span>
-                    <span>npm run tauri:dev</span>
-                    <span className="cursor" />
-                  </p>
-                </div>
+                  </div>
+                </article>
+
+                <article className="terminal-pane">
+                  <div className="pane-title">
+                    <span>quick context</span>
+                    <small>ai bridge</small>
+                  </div>
+                  <div className="mini-log">
+                    {bridgeEvents.map(([label, text]) => (
+                      <div key={label}>
+                        <strong>{label}</strong>
+                        <p>{text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </article>
               </div>
-            </div>
-            <dl className="hero-stats" aria-label="Project status">
-              <div>
-                <dt>release</dt>
-                <dd>v0.1.0</dd>
+            </section>
+
+            <aside className="ai-dock" aria-label="AI session preview">
+              <div className="dock-header">
+                <span>Claude Code</span>
+                <strong>ready</strong>
               </div>
-              <div>
-                <dt>targets</dt>
-                <dd>mac win linux</dd>
+              <div className="assistant-message">
+                <span>context</span>
+                <p>Captured release output, workflow logs, and local command state.</p>
               </div>
-              <div>
-                <dt>runtime</dt>
-                <dd>tauri v2</dd>
+              <div className="assistant-message user-message">
+                <span>next</span>
+                <p>Patch the failing build, explain the diff, then run it in the terminal.</p>
               </div>
-            </dl>
+              <div className="dock-input">/attach release-shell</div>
+            </aside>
           </div>
         </section>
 
-        <section className="platform-band" aria-label="Available downloads">
-          <div className="platform-track">
-            {platforms.map((platform) => (
-              <span key={platform}>{platform}</span>
+        <section className="platform-strip" aria-label="Available release targets">
+          <span>macOS Apple Silicon</span>
+          <span>macOS Intel</span>
+          <span>Windows EXE</span>
+          <span>Windows MSI</span>
+          <span>Linux AppImage</span>
+          <span>DEB</span>
+          <span>RPM</span>
+        </section>
+
+        <section id="workflow" className="workflow-section section-pad">
+          <div className="section-heading">
+            <p className="eyebrow">$ open workflow</p>
+            <h2>The interface is organized around the repair loop.</h2>
+            <p>
+              Keep the command, logs, assistant, and release state in one scan. The website now
+              mirrors that working surface instead of presenting the product as a static brochure.
+            </p>
+          </div>
+
+          <div className="workflow-grid">
+            <article className="command-palette">
+              <div className="palette-title">command palette</div>
+              {commandPalette.map(([command, detail]) => (
+                <div className="palette-row" key={command}>
+                  <code>{command}</code>
+                  <span>{detail}</span>
+                </div>
+              ))}
+            </article>
+
+            <article className="bridge-terminal">
+              <div className="pane-title">
+                <span>tail -f ai-bridge.log</span>
+                <small>live</small>
+              </div>
+              <div className="bridge-stream">
+                <p>
+                  <span>detect</span> npm error pattern in release-shell
+                </p>
+                <p>
+                  <span>capture</span> stderr excerpt, command, cwd, session id
+                </p>
+                <p>
+                  <span>attach</span> create Claude Code context bundle
+                </p>
+                <p>
+                  <span>run</span> apply suggested fix inside terminal
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="features" className="features-section section-pad">
+          <div className="section-heading narrow">
+            <p className="eyebrow">$ ls features</p>
+            <h2>Terminal mechanics first. AI exactly where it removes friction.</h2>
+          </div>
+          <div className="feature-grid">
+            {features.map(([title, body], index) => (
+              <article className="feature-card" data-accent={index % 6} key={title}>
+                <span>{String(index + 1).padStart(2, '0')}</span>
+                <h3>{title}</h3>
+                <p>{body}</p>
+              </article>
             ))}
           </div>
         </section>
 
-        <section id="tour" className="showcase section-pad">
+        <section id="preview" className="preview-section section-pad">
           <div className="section-heading">
-            <p className="eyebrow">$ less workflow.md</p>
-            <h2>Terminal, assistant, and build context share the same workspace.</h2>
+            <p className="eyebrow">$ preview workspace.svg</p>
+            <h2>The desktop app layout stays recognizable across the website.</h2>
             <p>
-              Shell sessions, AI sessions, and bridge alerts use the same session model. That makes
-              it fast to move from a failing command to a Claude-assisted fix without losing the
-              exact terminal context.
+              Sidebar sessions, split terminal panes, AI Bridge, and assistant context are treated
+              as the visual system, not as decorative screenshots.
             </p>
           </div>
-          <figure className="workspace-preview terminal-frame">
+          <figure className="workspace-preview">
             <figcaption>neuralterm workspace preview</figcaption>
             <img
               src="/images/neuralterm-workspace.svg"
@@ -158,103 +258,41 @@ export default function Home() {
           </figure>
         </section>
 
-        <section id="features" className="features section-pad">
-          <div className="section-heading narrow">
-            <p className="eyebrow">$ ls features</p>
-            <h2>Built like a terminal first, then extended where AI actually helps.</h2>
-          </div>
-          <div className="feature-grid">
-            {features.map((feature) => (
-              <article className="feature-card" key={feature.title}>
-                <span className={`feature-mark ${feature.mark}`} />
-                <h3>./{feature.title.toLowerCase().replaceAll(' ', '-')}</h3>
-                <p>{feature.body}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <section id="bridge" className="bridge section-pad">
-          <div className="bridge-copy">
-            <p className="eyebrow">$ tail -f ai-bridge.log</p>
-            <h2>When the terminal fails, the assistant gets the useful part.</h2>
-            <p>
-              AI Bridge watches terminal output for tracebacks, panics, npm errors, permission
-              failures, fatal git errors, segmentation faults, and failed command hints. When it
-              finds one, it captures a compact excerpt and offers to attach it to Claude Code.
-            </p>
-            <ul className="bridge-list">
-              <li>Captures the source session and terminal excerpt.</li>
-              <li>Ignores sessions you mark as unwatched.</li>
-              <li>Hands context into an AI pane without copying logs by hand.</li>
-            </ul>
-          </div>
-          <div className="bridge-panel" aria-label="AI Bridge flow">
-            <div className="flow-step">
-              <span>01</span>
-              <strong>Terminal output</strong>
-              <p>Build, test, git, and runtime logs stream through the PTY reader.</p>
-            </div>
-            <div className="flow-connector" />
-            <div className="flow-step">
-              <span>02</span>
-              <strong>Pattern detection</strong>
-              <p>Errors and failure text are throttled into concise suggestions.</p>
-            </div>
-            <div className="flow-connector" />
-            <div className="flow-step">
-              <span>03</span>
-              <strong>AI context</strong>
-              <p>Claude Code opens with the captured terminal context attached.</p>
-            </div>
-          </div>
-        </section>
-
-        <section id="architecture" className="architecture section-pad">
+        <section id="architecture" className="stack-section section-pad">
           <div className="section-heading">
             <p className="eyebrow">$ cat stack.json</p>
-            <h2>Small pieces, clear boundaries.</h2>
+            <h2>A small stack with clear runtime boundaries.</h2>
           </div>
-          <div className="architecture-grid">
-            {architecture.map(([title, body]) => (
-              <div className="architecture-node" key={title}>
-                <h3>{title}</h3>
-                <p>{body}</p>
+          <div className="stack-map">
+            {stack.map(([name, role]) => (
+              <div key={name}>
+                <strong>{name}</strong>
+                <span>{role}</span>
               </div>
             ))}
           </div>
         </section>
 
-        <section id="download" className="download section-pad">
-          <div className="download-copy">
+        <section id="download" className="download-section section-pad">
+          <div className="section-heading">
             <p className="eyebrow">$ ./download</p>
-            <h2>Download NeuralTerm v0.1.0.</h2>
+            <h2>Release v0.1.0 is published for macOS, Windows, and Linux.</h2>
             <p>
-              The first release is published with macOS, Windows, and Linux assets. Signing and
-              notarization are still pending, so operating systems may show trust warnings.
+              Signing and notarization are still pending, so operating systems may show trust
+              warnings on first launch.
             </p>
-            <a className="button primary" href={releaseUrl}>
-              open github release
-            </a>
           </div>
-          <div className="download-table" role="table" aria-label="Release assets">
-            <div role="row">
-              <span role="cell">macOS</span>
-              <strong role="cell">Apple Silicon and Intel DMG</strong>
-            </div>
-            <div role="row">
-              <span role="cell">Windows</span>
-              <strong role="cell">Setup EXE and MSI</strong>
-            </div>
-            <div role="row">
-              <span role="cell">Linux</span>
-              <strong role="cell">AppImage, DEB, and RPM</strong>
-            </div>
-            <div role="row">
-              <span role="cell">Source</span>
-              <strong role="cell">GitHub repository</strong>
-            </div>
+          <div className="download-grid">
+            {downloads.map(([platform, asset]) => (
+              <div className="download-row" key={platform}>
+                <span>{platform}</span>
+                <strong>{asset}</strong>
+              </div>
+            ))}
           </div>
+          <a className="button primary download-button" href={releaseUrl}>
+            open github release
+          </a>
         </section>
       </main>
 
