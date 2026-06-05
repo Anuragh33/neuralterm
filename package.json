@@ -9,7 +9,9 @@
     "preview": "vite preview --host 127.0.0.1 --port 1421",
     "tauri": "tauri",
     "tauri:dev": "tauri dev",
-    "tauri:build": "tauri build"
+    "tauri:build": "tauri build",
+    "site:dev": "vite website --host 127.0.0.1 --port 4321",
+    "site:build": "vite build website --outDir ../dist-website --emptyOutDir"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.68.0",
