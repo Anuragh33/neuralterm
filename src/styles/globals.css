@@ -113,6 +113,7 @@ textarea {
 
 .terminal-host {
   min-width: 0;
+  overflow: hidden;
 }
 
 .terminal-host .xterm {

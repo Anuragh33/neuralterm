@@ -3,20 +3,20 @@ use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     io::{Read, Write},
-    sync::Mutex,
+    sync::{Arc, Mutex},
     thread,
     time::{Duration, Instant, SystemTime, UNIX_EPOCH},
 };
 use tauri::{AppHandle, Emitter, State};
 
 pub struct PtyState {
-    sessions: Mutex<HashMap<String, PtyProcess>>,
+    sessions: Arc<Mutex<HashMap<String, PtyProcess>>>,
 }
 
 impl Default for PtyState {
     fn default() -> Self {
         Self {
-            sessions: Mutex::new(HashMap::new()),
+            sessions: Arc::new(Mutex::new(HashMap::new())),
         }
     }
 }
@@ -108,10 +108,29 @@ pub fn spawn_pty(
         .master
         .try_clone_reader()
         .map_err(|error| error.to_string())?;
-    let writer = pair.master.take_writer().map_err(|error| error.to_string())?;
+    let writer = pair
+        .master
+        .take_writer()
+        .map_err(|error| error.to_string())?;
 
     let session_id = request.session_id.clone();
     let event_session_id = request.session_id.clone();
+    let reader_sessions = Arc::clone(&state.sessions);
+    {
+        let mut sessions = state
+            .sessions
+            .lock()
+            .map_err(|_| "PTY state lock was poisoned".to_string())?;
+        sessions.insert(
+            request.session_id.clone(),
+            PtyProcess {
+                master: pair.master,
+                writer,
+                child,
+            },
+        );
+    }
+
     thread::spawn(move || {
         let mut buffer = [0_u8; 8192];
         let mut last_bridge_alert = Instant::now() - Duration::from_secs(60);
@@ -125,6 +144,7 @@ pub fn spawn_pty(
                             message: "PTY stream closed".to_string(),
                         },
                     );
+                    remove_finished_pty(&reader_sessions, &event_session_id);
                     break;
                 }
                 Ok(size) => {
@@ -160,26 +180,20 @@ pub fn spawn_pty(
                             message: error.to_string(),
                         },
                     );
+                    remove_finished_pty(&reader_sessions, &event_session_id);
                     break;
                 }
             }
         }
     });
 
-    let mut sessions = state
-        .sessions
-        .lock()
-        .map_err(|_| "PTY state lock was poisoned".to_string())?;
-    sessions.insert(
-        request.session_id.clone(),
-        PtyProcess {
-            master: pair.master,
-            writer,
-            child,
-        },
-    );
-
     Ok(PtySpawned { session_id })
+}
+
+fn remove_finished_pty(sessions: &Arc<Mutex<HashMap<String, PtyProcess>>>, session_id: &str) {
+    if let Ok(mut sessions) = sessions.lock() {
+        sessions.remove(session_id);
+    }
 }
 
 #[tauri::command]
@@ -256,11 +270,19 @@ pub fn kill_pty(
 
 fn build_command(command: Option<&str>) -> CommandBuilder {
     let shell = default_shell();
-    let Some(command) = command.filter(|value| !value.trim().is_empty()).map(str::trim) else {
-        return CommandBuilder::new(shell);
+    let mut builder = CommandBuilder::new(shell);
+    builder.env("TERM", "xterm-256color");
+    builder.env("COLORTERM", "truecolor");
+
+    let Some(command) = command
+        .filter(|value| !value.trim().is_empty())
+        .map(str::trim)
+    else {
+        #[cfg(not(windows))]
+        builder.arg("-i");
+        return builder;
     };
 
-    let mut builder = CommandBuilder::new(shell);
     #[cfg(windows)]
     builder.arg("/C");
     #[cfg(not(windows))]
@@ -370,7 +392,21 @@ fn now_millis() -> u128 {
 
 #[cfg(test)]
 mod tests {
-    use super::{detect_error_title, excerpt};
+    use super::{build_command, detect_error_title, excerpt};
+
+    #[test]
+    fn launches_default_shell_interactively() {
+        let command = build_command(None);
+        #[cfg(not(windows))]
+        assert_eq!(
+            command.get_argv().last().and_then(|arg| arg.to_str()),
+            Some("-i")
+        );
+        assert_eq!(
+            command.get_env("TERM").and_then(|value| value.to_str()),
+            Some("xterm-256color")
+        );
+    }
 
     #[test]
     fn detects_common_terminal_failures() {

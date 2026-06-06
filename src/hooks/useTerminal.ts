@@ -133,16 +133,45 @@ export function useTerminal(
     const resizeObserver = new ResizeObserver(fitAndResize);
     resizeObserver.observe(containerRef.current);
 
+    const spawnBackendPty = () =>
+      invoke('spawn_pty', {
+        request: {
+          sessionId: session.id,
+          command: session.launchCommand ?? null,
+          cwd: session.cwd || null,
+          cols: terminal.cols,
+          rows: terminal.rows,
+        },
+      });
+
+    const writeToPty = async (data: string) => {
+      try {
+        await invoke('write_pty', { sessionId: session.id, data });
+      } catch {
+        // A frontend session can outlive its PTY after a shell exit or app restart.
+        await invoke('kill_pty', { sessionId: session.id }).catch(() => undefined);
+        await spawnBackendPty();
+        markPtyStarted(session.id);
+        await invoke('write_pty', { sessionId: session.id, data });
+      }
+    };
+
     const dataDisposable = terminal.onData((data) => {
       markActivity();
       if (!hasTauriRuntime()) {
         terminal.write(data);
         return;
       }
-      void invoke('write_pty', { sessionId: session.id, data }).catch((error) => {
+      void writeToPty(data).catch((error) => {
         terminal.writeln(`\r\n\x1b[31mPTY write failed: ${String(error)}\x1b[0m`);
       });
     });
+
+    const onFocusRequest = (event: Event) => {
+      const customEvent = event as CustomEvent<{ sessionId: string }>;
+      if (customEvent.detail.sessionId === session.id) terminal.focus();
+    };
+    window.addEventListener('neuralterm-terminal-focus', onFocusRequest);
 
     const onSearchRequest = (event: Event) => {
       const customEvent = event as CustomEvent<{ sessionId: string }>;
@@ -167,7 +196,7 @@ export function useTerminal(
       if (customEvent.detail.action === 'paste') {
         const text = await navigator.clipboard.readText();
         if (hasTauriRuntime()) {
-          await invoke('write_pty', { sessionId: session.id, data: text });
+          await writeToPty(text);
         } else {
           terminal.write(text);
         }
@@ -180,8 +209,24 @@ export function useTerminal(
     };
     window.addEventListener('neuralterm-terminal-action', onTerminalAction);
 
+    const listenerPromises: Promise<void>[] = [];
+    const assignListener = (
+      promise: Promise<UnlistenFn>,
+      assign: (unlisten: UnlistenFn) => void,
+    ) => {
+      listenerPromises.push(
+        promise.then((unlisten) => {
+          if (disposed) {
+            unlisten();
+          } else {
+            assign(unlisten);
+          }
+        }),
+      );
+    };
+
     if (hasTauriRuntime()) {
-      listen<PtyDataEvent>('pty-data', (event) => {
+      assignListener(listen<PtyDataEvent>('pty-data', (event) => {
         if (event.payload.sessionId === session.id) {
           terminal.write(event.payload.data);
           markActivity();
@@ -189,24 +234,24 @@ export function useTerminal(
           if (cwd) updateSessionCwd(session.id, cwd);
           saveScrollback();
         }
-      }).then((unlisten) => {
+      }), (unlisten) => {
         unlistenData = unlisten;
       });
 
-      listen<PtyFailureEvent>('pty-error', (event) => {
+      assignListener(listen<PtyFailureEvent>('pty-error', (event) => {
         if (event.payload.sessionId === session.id) {
           terminal.writeln(`\r\n\x1b[31m${event.payload.message}\x1b[0m`);
           setSessionStatus(session.id, 'crashed');
         }
-      }).then((unlisten) => {
+      }), (unlisten) => {
         unlistenError = unlisten;
       });
 
-      listen<PtyFailureEvent>('pty-exit', (event) => {
+      assignListener(listen<PtyFailureEvent>('pty-exit', (event) => {
         if (event.payload.sessionId === session.id) {
           setSessionStatus(session.id, 'closed');
         }
-      }).then((unlisten) => {
+      }), (unlisten) => {
         unlistenExit = unlisten;
       });
     }
@@ -224,43 +269,34 @@ export function useTerminal(
         return;
       }
 
-      if (session.ptyStarted) {
-        terminal.writeln('\x1b[90mReattached to live PTY output stream.\x1b[0m');
-        return;
-      }
-
       try {
-        await invoke('spawn_pty', {
-          request: {
-            sessionId: session.id,
-            command: session.launchCommand ?? null,
-            cwd: session.cwd || null,
-            cols: terminal.cols,
-            rows: terminal.rows,
-          },
-        });
+        await spawnBackendPty();
         markPtyStarted(session.id);
         if (session.pendingInput) {
           window.setTimeout(() => {
-            void invoke('write_pty', {
-              sessionId: session.id,
-              data: session.pendingInput,
-            }).finally(() => consumePendingInput(session.id));
+            void writeToPty(session.pendingInput as string).finally(() =>
+              consumePendingInput(session.id),
+            );
           }, 150);
         }
+        if (active) terminal.focus();
       } catch (error) {
         terminal.writeln(`\x1b[31mFailed to spawn PTY: ${String(error)}\x1b[0m`);
         setSessionStatus(session.id, 'crashed');
       }
     };
 
-    void spawn();
+    void Promise.all(listenerPromises).then(() => {
+      if (!disposed) void spawn();
+    });
     window.requestAnimationFrame(fitAndResize);
+    if (active) window.requestAnimationFrame(() => terminal.focus());
 
     return () => {
       disposed = true;
       resizeObserver.disconnect();
       dataDisposable.dispose();
+      window.removeEventListener('neuralterm-terminal-focus', onFocusRequest);
       window.removeEventListener('neuralterm-terminal-search', onSearchRequest);
       window.removeEventListener('neuralterm-terminal-action', onTerminalAction);
       unlistenData?.();

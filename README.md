@@ -34,13 +34,13 @@ The latest release is available on GitHub:
 
 | Platform | Recommended Asset | Notes |
 | --- | --- | --- |
-| macOS Apple Silicon | `NeuralTerm_0.2.0_aarch64.dmg` | For M1/M2/M3/M4 Macs |
-| macOS Intel | `NeuralTerm_0.2.0_x64.dmg` | For Intel Macs |
-| Windows | `NeuralTerm_0.2.0_x64-setup.exe` | Installer executable |
-| Windows | `NeuralTerm_0.2.0_x64_en-US.msi` | MSI package |
-| Linux | `NeuralTerm_0.2.0_amd64.AppImage` | Portable Linux app |
-| Linux Debian/Ubuntu | `NeuralTerm_0.2.0_amd64.deb` | Debian package |
-| Linux Fedora/RHEL | `NeuralTerm-0.2.0-1.x86_64.rpm` | RPM package |
+| macOS Apple Silicon | `NeuralTerm_0.2.1_darwin_aarch64_dmg.dmg` | For M1/M2/M3/M4 Macs |
+| macOS Intel | `NeuralTerm_0.2.1_darwin_x64_dmg.dmg` | For Intel Macs |
+| Windows | `NeuralTerm_0.2.1_windows_x64_nsis.exe` | Installer executable |
+| Windows | `NeuralTerm_0.2.1_windows_x64_msi.msi` | MSI package |
+| Linux | `NeuralTerm_0.2.1_linux_amd64_appimage.AppImage` | Portable Linux app |
+| Linux Debian/Ubuntu | `NeuralTerm_0.2.1_linux_amd64_deb.deb` | Debian package |
+| Linux Fedora/RHEL | `NeuralTerm_0.2.1_linux_x86_64_rpm.rpm` | RPM package |
 
 The current release artifacts are unsigned. macOS Gatekeeper and Windows SmartScreen may show trust warnings until code signing and notarization are configured.
 
@@ -202,6 +202,7 @@ See [docs/release.md](docs/release.md) for the release checklist, signing notes,
 
 ## Current Status
 
+- `v0.2.1` fixes the collapsed terminal viewport, restores visible interactive prompts, and hardens PTY focus and recovery.
 - `v0.2.0` adds complete workspace management, onboarding, persisted split/terminal context, updater support, CI, and automated tests.
 - macOS, Windows, and Linux assets are built by GitHub Actions.
 - In-app updates are signed with a dedicated Tauri updater key.

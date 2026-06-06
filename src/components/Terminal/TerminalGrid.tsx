@@ -41,9 +41,8 @@ export function TerminalGrid({ onNewSession }: TerminalGridProps) {
   }
 
   return (
-    <main className="min-h-0 flex-1 bg-app">
+    <main className="flex min-h-0 flex-1 bg-app">
       <SplitView session={activeSession} />
     </main>
   );
 }
-

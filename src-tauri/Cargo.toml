@@ -1,6 +1,6 @@
 [package]
 name = "neuralterm"
-version = "0.2.0"
+version = "0.2.1"
 description = "AI-native terminal multiplexer"
 authors = ["NeuralTerm"]
 edition = "2021"

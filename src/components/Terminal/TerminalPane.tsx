@@ -39,14 +39,21 @@ export function TerminalPane({ session, active, focused = active, onFocus }: Ter
     setMenu(null);
   };
 
+  const focusTerminal = () => {
+    onFocus?.();
+    window.dispatchEvent(
+      new CustomEvent('neuralterm-terminal-focus', { detail: { sessionId: session.id } }),
+    );
+  };
+
   return (
     <section
       className={[
-        'flex min-h-0 flex-1 flex-col border bg-app',
+        'flex h-full min-h-0 min-w-0 flex-1 flex-col border bg-app',
         focused ? 'border-[#7f77dd]/70' : 'border-transparent',
       ].join(' ')}
       aria-label={`${session.name} terminal`}
-      onMouseDown={onFocus}
+      onMouseDown={focusTerminal}
     >
       <div className="flex h-8 shrink-0 items-center gap-2 border-b border-border bg-[#101016] px-3 text-xs text-secondary">
         <span className="h-2 w-2 rounded-full" style={{ backgroundColor: config.color }} />
@@ -60,7 +67,7 @@ export function TerminalPane({ session, active, focused = active, onFocus }: Ter
         className="terminal-host min-h-0 flex-1 p-3"
         onContextMenu={(event) => {
           event.preventDefault();
-          onFocus?.();
+          focusTerminal();
           setMenu({ x: event.clientX, y: event.clientY });
         }}
       />
