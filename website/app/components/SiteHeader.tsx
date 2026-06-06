@@ -53,7 +53,7 @@ export function SiteHeader() {
           href="https://github.com/Anuragh33/neuralterm/releases/latest"
           onClick={() => setNavOpen(false)}
         >
-          curl v0.2.1
+          curl v0.2.2
         </a>
       </nav>
     </header>
