@@ -14,6 +14,7 @@ const hasTauriRuntime = () =>
 export function Tab({ session, active }: TabProps) {
   const activateSession = useSessionStore((state) => state.activateSession);
   const closeSession = useSessionStore((state) => state.closeSession);
+  const reorderSessionTab = useSessionStore((state) => state.reorderSessionTab);
   const config = SESSION_TYPE_CONFIG[session.type];
   const Icon = config.icon;
 
@@ -34,6 +35,21 @@ export function Tab({ session, active }: TabProps) {
       role="tab"
       aria-selected={active}
       draggable
+      onDragStart={(event) => {
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('application/x-neuralterm-session', session.id);
+      }}
+      onDragOver={(event) => {
+        if (event.dataTransfer.types.includes('application/x-neuralterm-session')) {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = 'move';
+        }
+      }}
+      onDrop={(event) => {
+        event.preventDefault();
+        const sourceId = event.dataTransfer.getData('application/x-neuralterm-session');
+        if (sourceId) reorderSessionTab(sourceId, session.id);
+      }}
       onClick={() => activateSession(session.id)}
     >
       <Icon className="h-4 w-4 shrink-0" style={{ color: config.color }} aria-hidden="true" />
@@ -52,4 +68,3 @@ export function Tab({ session, active }: TabProps) {
     </div>
   );
 }
-

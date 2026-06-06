@@ -68,8 +68,8 @@
     <text x="430" y="257" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Release Shell</text>
     <text x="430" y="573" fill="#e0dff8" font-family="Inter, Arial, sans-serif" font-size="13" font-weight="700">Verifier</text>
 
-    <text x="430" y="312" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ git tag v0.1.0</text>
-    <text x="430" y="342" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ git push origin v0.1.0</text>
+    <text x="430" y="312" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ git tag v0.2.0</text>
+    <text x="430" y="342" fill="#7f77dd" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">$ git push origin v0.2.0</text>
     <text x="430" y="378" fill="#8888a0" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">Release workflow started</text>
     <text x="430" y="408" fill="#4db877" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">macOS Apple Silicon complete</text>
     <text x="430" y="438" fill="#4db877" font-family="SFMono-Regular, Menlo, Consolas, monospace" font-size="14">macOS Intel complete</text>

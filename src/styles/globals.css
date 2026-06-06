@@ -92,6 +92,25 @@ textarea {
   font: inherit;
 }
 
+.icon-button {
+  display: grid;
+  height: 1.75rem;
+  width: 1.75rem;
+  place-items: center;
+  border-radius: 0.25rem;
+  color: var(--text-secondary);
+}
+
+.icon-button:hover:not(:disabled) {
+  background: var(--bg-active);
+  color: var(--text-primary);
+}
+
+.icon-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.3;
+}
+
 .terminal-host {
   min-width: 0;
 }

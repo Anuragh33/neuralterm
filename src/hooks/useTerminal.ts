@@ -3,12 +3,14 @@ import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { useEffect, useRef } from 'react';
 import { FitAddon } from 'xterm-addon-fit';
 import { SearchAddon } from 'xterm-addon-search';
+import { SerializeAddon } from 'xterm-addon-serialize';
 import { WebLinksAddon } from 'xterm-addon-web-links';
 import { Terminal } from 'xterm';
 import 'xterm/css/xterm.css';
 import { useSessionStore } from '../store/sessionStore';
 import { useSettingsStore } from '../store/settingsStore';
 import type { PtyDataEvent, PtyFailureEvent, TerminalSession } from '../types';
+import { extractOscCwd } from '../lib/terminal';
 
 const hasTauriRuntime = () =>
   typeof window !== 'undefined' && typeof window.__TAURI_INTERNALS__ !== 'undefined';
@@ -25,6 +27,7 @@ export function useTerminal(
   const consumePendingInput = useSessionStore((state) => state.consumePendingInput);
   const setSessionStatus = useSessionStore((state) => state.setSessionStatus);
   const touchSession = useSessionStore((state) => state.touchSession);
+  const updateSessionCwd = useSessionStore((state) => state.updateSessionCwd);
   const fontFamily = useSettingsStore((state) => state.fontFamily);
   const fontSize = useSettingsStore((state) => state.fontSize);
   const lineHeight = useSettingsStore((state) => state.lineHeight);
@@ -69,10 +72,15 @@ export function useTerminal(
 
     const fitAddon = new FitAddon();
     const searchAddon = new SearchAddon();
+    const serializeAddon = new SerializeAddon();
     terminal.loadAddon(fitAddon);
     terminal.loadAddon(new WebLinksAddon());
     terminal.loadAddon(searchAddon);
+    terminal.loadAddon(serializeAddon);
     terminal.open(containerRef.current);
+    if (session.scrollback) {
+      terminal.write(session.scrollback);
+    }
     fitAddon.fit();
 
     terminalRef.current = terminal;
@@ -83,6 +91,25 @@ export function useTerminal(
     let unlistenData: UnlistenFn | undefined;
     let unlistenError: UnlistenFn | undefined;
     let unlistenExit: UnlistenFn | undefined;
+    let lastActivityUpdate = 0;
+    let lastScrollbackSave = 0;
+    const saveScrollback = () => {
+      if (!hasTauriRuntime()) return;
+      const current = Date.now();
+      if (current - lastScrollbackSave < 5_000) return;
+      lastScrollbackSave = current;
+      void invoke('save_terminal_scrollback', {
+        sessionId: session.id,
+        scrollback: serializeAddon.serialize().slice(-120_000),
+      }).catch(() => undefined);
+    };
+    const markActivity = () => {
+      const current = Date.now();
+      if (current - lastActivityUpdate > 5_000) {
+        lastActivityUpdate = current;
+        touchSession(session.id);
+      }
+    };
 
     const resizeBackend = () => {
       if (!hasTauriRuntime()) return;
@@ -107,7 +134,7 @@ export function useTerminal(
     resizeObserver.observe(containerRef.current);
 
     const dataDisposable = terminal.onData((data) => {
-      touchSession(session.id);
+      markActivity();
       if (!hasTauriRuntime()) {
         terminal.write(data);
         return;
@@ -127,11 +154,40 @@ export function useTerminal(
     };
     window.addEventListener('neuralterm-terminal-search', onSearchRequest);
 
+    const onTerminalAction = async (event: Event) => {
+      const customEvent = event as CustomEvent<{
+        sessionId: string;
+        action: 'copy' | 'paste' | 'clear' | 'search';
+      }>;
+      if (customEvent.detail.sessionId !== session.id) return;
+      if (customEvent.detail.action === 'copy') {
+        const selection = terminal.getSelection();
+        if (selection) await navigator.clipboard.writeText(selection);
+      }
+      if (customEvent.detail.action === 'paste') {
+        const text = await navigator.clipboard.readText();
+        if (hasTauriRuntime()) {
+          await invoke('write_pty', { sessionId: session.id, data: text });
+        } else {
+          terminal.write(text);
+        }
+      }
+      if (customEvent.detail.action === 'clear') terminal.clear();
+      if (customEvent.detail.action === 'search') {
+        const query = window.prompt('Search terminal');
+        if (query) searchAddon.findNext(query);
+      }
+    };
+    window.addEventListener('neuralterm-terminal-action', onTerminalAction);
+
     if (hasTauriRuntime()) {
       listen<PtyDataEvent>('pty-data', (event) => {
         if (event.payload.sessionId === session.id) {
           terminal.write(event.payload.data);
-          touchSession(session.id);
+          markActivity();
+          const cwd = extractOscCwd(event.payload.data);
+          if (cwd) updateSessionCwd(session.id, cwd);
+          saveScrollback();
         }
       }).then((unlisten) => {
         unlistenData = unlisten;
@@ -206,6 +262,7 @@ export function useTerminal(
       resizeObserver.disconnect();
       dataDisposable.dispose();
       window.removeEventListener('neuralterm-terminal-search', onSearchRequest);
+      window.removeEventListener('neuralterm-terminal-action', onTerminalAction);
       unlistenData?.();
       unlistenError?.();
       unlistenExit?.();
@@ -215,7 +272,6 @@ export function useTerminal(
       searchAddonRef.current = null;
     };
   }, [
-    active,
     consumePendingInput,
     containerRef,
     cursorBlink,
@@ -224,9 +280,9 @@ export function useTerminal(
     fontSize,
     lineHeight,
     markPtyStarted,
-    session,
+    session.id,
     setSessionStatus,
-    touchSession,
+    updateSessionCwd,
   ]);
 
   useEffect(() => {

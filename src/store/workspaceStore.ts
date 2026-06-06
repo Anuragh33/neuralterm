@@ -9,6 +9,10 @@ interface WorkspaceState {
   hydrateWorkspaces: (workspaces: Workspace[]) => void;
   setActiveWorkspace: (workspaceId: string | 'all') => void;
   createWorkspace: (name: string, color: string) => Workspace;
+  renameWorkspace: (workspaceId: string, name: string) => void;
+  setWorkspaceColor: (workspaceId: string, color: string) => void;
+  moveWorkspace: (workspaceId: string, direction: -1 | 1) => void;
+  deleteWorkspace: (workspaceId: string) => void;
   toggleWorkspace: (workspaceId: string) => void;
 }
 
@@ -55,6 +59,13 @@ const persistWorkspaceCollapsed = (workspace: Workspace) => {
   });
 };
 
+const deletePersistedWorkspace = (workspaceId: string) => {
+  if (!hasTauriRuntime()) return;
+  void invoke('delete_workspace', { workspaceId }).catch((error) => {
+    console.error('Failed to delete workspace', error);
+  });
+};
+
 export const useWorkspaceStore = create<WorkspaceState>((set) => ({
   activeWorkspaceId: 'all',
   workspaces: [defaultWorkspace],
@@ -81,6 +92,47 @@ export const useWorkspaceStore = create<WorkspaceState>((set) => ({
     });
     persistWorkspace(workspace!);
     return workspace!;
+  },
+  renameWorkspace: (workspaceId, name) =>
+    set((state) => {
+      const nextName = name.trim();
+      if (!nextName) return state;
+      const workspaces = state.workspaces.map((workspace) =>
+        workspace.id === workspaceId ? { ...workspace, name: nextName } : workspace,
+      );
+      const workspace = workspaces.find((item) => item.id === workspaceId);
+      if (workspace) persistWorkspace(workspace);
+      return { workspaces };
+    }),
+  setWorkspaceColor: (workspaceId, color) =>
+    set((state) => {
+      const workspaces = state.workspaces.map((workspace) =>
+        workspace.id === workspaceId ? { ...workspace, color } : workspace,
+      );
+      const workspace = workspaces.find((item) => item.id === workspaceId);
+      if (workspace) persistWorkspace(workspace);
+      return { workspaces };
+    }),
+  moveWorkspace: (workspaceId, direction) =>
+    set((state) => {
+      const index = state.workspaces.findIndex((workspace) => workspace.id === workspaceId);
+      const targetIndex = index + direction;
+      if (index < 0 || targetIndex < 0 || targetIndex >= state.workspaces.length) return state;
+      const workspaces = [...state.workspaces];
+      [workspaces[index], workspaces[targetIndex]] = [workspaces[targetIndex], workspaces[index]];
+      const ordered = workspaces.map((workspace, sortOrder) => ({ ...workspace, sortOrder }));
+      ordered.forEach(persistWorkspace);
+      return { workspaces: ordered };
+    }),
+  deleteWorkspace: (workspaceId) => {
+    if (workspaceId === DEFAULT_WORKSPACE_ID) return;
+    deletePersistedWorkspace(workspaceId);
+    set((state) => ({
+      workspaces: state.workspaces
+        .filter((workspace) => workspace.id !== workspaceId)
+        .map((workspace, sortOrder) => ({ ...workspace, sortOrder })),
+      activeWorkspaceId: state.activeWorkspaceId === workspaceId ? 'all' : state.activeWorkspaceId,
+    }));
   },
   toggleWorkspace: (workspaceId) => {
     let changedWorkspace: Workspace | undefined;

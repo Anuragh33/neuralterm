@@ -1,9 +1,12 @@
 import { Clock, Folder, Radio } from 'lucide-react';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { invoke } from '@tauri-apps/api/core';
+import { hasTauriRuntime } from '../../lib/runtime';
 import { useSessionStore } from '../../store/sessionStore';
 import { SESSION_TYPE_CONFIG } from '../../types';
 
 export function StatusBar() {
+  const [now, setNow] = useState(() => new Date());
   const sessions = useSessionStore((state) => state.sessions);
   const activeSessionId = useSessionStore((state) => state.activeSessionId);
   const activeSession = sessions.find((session) => session.id === activeSessionId);
@@ -15,6 +18,10 @@ export function StatusBar() {
     }),
     [sessions],
   );
+  useEffect(() => {
+    const timer = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(timer);
+  }, []);
 
   return (
     <footer className="flex h-7 shrink-0 items-center border-t border-border bg-[#101016] px-3 text-xs text-secondary">
@@ -32,10 +39,20 @@ export function StatusBar() {
           {counts.crashed}
         </span>
       </div>
-      <div className="mx-auto flex min-w-0 items-center gap-1 px-4">
+      <button
+        type="button"
+        className="mx-auto flex min-w-0 items-center gap-1 px-4 hover:text-primary"
+        disabled={!activeSession?.cwd}
+        title={activeSession?.cwd ? 'Open working directory' : undefined}
+        onClick={() => {
+          if (activeSession?.cwd && hasTauriRuntime()) {
+            void invoke('open_path', { path: activeSession.cwd });
+          }
+        }}
+      >
         <Folder className="h-3.5 w-3.5 shrink-0" />
         <span className="truncate">{activeSession?.cwd || '~'}</span>
-      </div>
+      </button>
       <div className="flex shrink-0 items-center gap-4">
         <span className="flex items-center gap-1">
           <Radio className="h-3.5 w-3.5" />
@@ -44,10 +61,9 @@ export function StatusBar() {
         <span>UTF-8</span>
         <span className="flex items-center gap-1">
           <Clock className="h-3.5 w-3.5" />
-          {new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit' }).format(new Date())}
+          {new Intl.DateTimeFormat([], { hour: '2-digit', minute: '2-digit' }).format(now)}
         </span>
       </div>
     </footer>
   );
 }
-

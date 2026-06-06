@@ -9,7 +9,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/Anuragh33/neuralterm/releases/tag/v0.1.0"><img alt="Release" src="https://img.shields.io/github/v/release/Anuragh33/neuralterm?include_prereleases&style=for-the-badge"></a>
+  <a href="https://github.com/Anuragh33/neuralterm/releases/latest"><img alt="Release" src="https://img.shields.io/github/v/release/Anuragh33/neuralterm?include_prereleases&style=for-the-badge"></a>
   <img alt="Tauri" src="https://img.shields.io/badge/Tauri-v2-24C8DB?style=for-the-badge&logo=tauri&logoColor=white">
   <img alt="React" src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=101016">
   <img alt="Rust" src="https://img.shields.io/badge/Rust-backend-CE412B?style=for-the-badge&logo=rust&logoColor=white">
@@ -30,17 +30,17 @@ The goal is simple: keep your terminal, build errors, project context, and repai
 
 The latest release is available on GitHub:
 
-**[Download NeuralTerm v0.1.0](https://github.com/Anuragh33/neuralterm/releases/tag/v0.1.0)**
+**[Download the latest NeuralTerm release](https://github.com/Anuragh33/neuralterm/releases/latest)**
 
 | Platform | Recommended Asset | Notes |
 | --- | --- | --- |
-| macOS Apple Silicon | `NeuralTerm_0.1.0_aarch64.dmg` | For M1/M2/M3/M4 Macs |
-| macOS Intel | `NeuralTerm_0.1.0_x64.dmg` | For Intel Macs |
-| Windows | `NeuralTerm_0.1.0_x64-setup.exe` | Installer executable |
-| Windows | `NeuralTerm_0.1.0_x64_en-US.msi` | MSI package |
-| Linux | `NeuralTerm_0.1.0_amd64.AppImage` | Portable Linux app |
-| Linux Debian/Ubuntu | `NeuralTerm_0.1.0_amd64.deb` | Debian package |
-| Linux Fedora/RHEL | `NeuralTerm-0.1.0-1.x86_64.rpm` | RPM package |
+| macOS Apple Silicon | `NeuralTerm_0.2.0_aarch64.dmg` | For M1/M2/M3/M4 Macs |
+| macOS Intel | `NeuralTerm_0.2.0_x64.dmg` | For Intel Macs |
+| Windows | `NeuralTerm_0.2.0_x64-setup.exe` | Installer executable |
+| Windows | `NeuralTerm_0.2.0_x64_en-US.msi` | MSI package |
+| Linux | `NeuralTerm_0.2.0_amd64.AppImage` | Portable Linux app |
+| Linux Debian/Ubuntu | `NeuralTerm_0.2.0_amd64.deb` | Debian package |
+| Linux Fedora/RHEL | `NeuralTerm-0.2.0-1.x86_64.rpm` | RPM package |
 
 The current release artifacts are unsigned. macOS Gatekeeper and Windows SmartScreen may show trust warnings until code signing and notarization are configured.
 
@@ -73,16 +73,16 @@ The current release artifacts are unsigned. macOS Gatekeeper and Windows SmartSc
 - Browser preview fallback for frontend development
 - xterm.js rendering with fit, search, and web-link addons
 - Session lifecycle controls for spawn, resize, write, and kill
-- Activity tracking and persisted session metadata
+- Activity tracking, CWD detection, and persisted terminal scrollback
 
 ### Multiplexer UX
 
 - Resizable and collapsible sidebar
-- Workspace filtering and quick switching
+- Full workspace create, rename, reorder, recolor, move-session, and delete workflows
 - Split right and split down controls
 - Focus navigation between panes
 - Command palette for shell, AI, settings, and layout commands
-- Keyboard shortcuts for high-frequency terminal actions
+- Keyboard shortcuts, drag-reorderable tabs, and an opt-in global quick launcher
 
 ### Claude Code And HER
 
@@ -156,6 +156,12 @@ npm run tauri:build
 
 The dev server uses `http://127.0.0.1:1421/`.
 
+Run the complete verification suite:
+
+```bash
+npm run check
+```
+
 ## Project Website
 
 The project website is a Next.js app under `website/`.
@@ -181,8 +187,8 @@ In the Tauri app, the API key is stored with the OS keychain. In browser preview
 GitHub Releases are configured in [`.github/workflows/release.yml`](.github/workflows/release.yml). A version tag builds platform assets automatically:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 The workflow builds:
@@ -196,10 +202,10 @@ See [docs/release.md](docs/release.md) for the release checklist, signing notes,
 
 ## Current Status
 
-- `v0.1.0` release is published.
-- macOS, Windows, and Linux assets are available.
-- Release builds pass in GitHub Actions.
-- Signing and notarization are not configured yet.
+- `v0.2.0` adds complete workspace management, onboarding, persisted split/terminal context, updater support, CI, and automated tests.
+- macOS, Windows, and Linux assets are built by GitHub Actions.
+- In-app updates are signed with a dedicated Tauri updater key.
+- Platform trust signing and macOS notarization are not configured yet.
 
 ## Tech Stack
 
@@ -218,9 +224,9 @@ See [docs/release.md](docs/release.md) for the release checklist, signing notes,
 
 - Anthropic API keys are not committed or bundled.
 - The desktop app stores the API key through OS keychain integration.
-- The updater/signing infrastructure is intentionally not faked; it needs real signing keys and a release endpoint.
+- In-app updater packages are signed independently from platform trust signing.
 - Unsigned builds are useful for testing but not ideal for broad public distribution.
 
 ## License
 
-No license file has been added yet. Add one before publishing the project as open source.
+NeuralTerm is available under the [MIT License](LICENSE).

@@ -50,10 +50,10 @@ export function SiteHeader() {
         ))}
         <a
           className="nav-cta"
-          href="https://github.com/Anuragh33/neuralterm/releases/tag/v0.1.0"
+          href="https://github.com/Anuragh33/neuralterm/releases/latest"
           onClick={() => setNavOpen(false)}
         >
-          curl v0.1.0
+          curl v0.2.0
         </a>
       </nav>
     </header>

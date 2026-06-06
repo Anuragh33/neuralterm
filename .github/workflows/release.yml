@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       tag:
-        description: "Release tag to create or update, for example v0.1.0"
+        description: "Release tag to create or update, for example v0.2.0"
         required: true
         type: string
 
@@ -70,6 +70,8 @@ jobs:
         uses: tauri-apps/tauri-action@v0.6.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
         with:
           tagName: ${{ env.RELEASE_TAG }}
           releaseName: NeuralTerm ${{ env.RELEASE_TAG }}
@@ -78,7 +80,7 @@ jobs:
 
             Assets are built by GitHub Actions for macOS, Windows, and Linux.
             macOS and Windows assets are unsigned unless signing secrets are configured.
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
           assetNamePattern: NeuralTerm_[version]_[platform]_[arch]_[bundle][ext]

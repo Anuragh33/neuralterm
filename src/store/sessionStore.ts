@@ -8,6 +8,7 @@ import {
   type TerminalSession,
 } from '../types';
 import { hasTauriRuntime } from '../lib/runtime';
+import { useSettingsStore } from './settingsStore';
 
 interface CreateSessionOptions {
   name?: string;
@@ -31,6 +32,10 @@ interface SessionState {
   activateSession: (sessionId: string) => void;
   closeSession: (sessionId: string) => void;
   renameSession: (sessionId: string, name: string) => void;
+  moveSessionToWorkspace: (sessionId: string, workspaceId: string) => void;
+  toggleSessionPinned: (sessionId: string) => void;
+  reorderSessionTab: (sourceSessionId: string, targetSessionId: string) => void;
+  updateSessionCwd: (sessionId: string, cwd: string) => void;
   markPtyStarted: (sessionId: string) => void;
   toggleSessionWatched: (sessionId: string) => void;
   consumePendingInput: (sessionId: string) => void;
@@ -102,6 +107,7 @@ export const useSessionStore = create<SessionState>((set, get) => ({
   createSession: (type = 'shell', options = {}) => {
     const sessionCount = get().sessions.filter((session) => session.type === type).length;
     const config = SESSION_TYPE_CONFIG[type];
+    const settings = useSettingsStore.getState();
     const session: TerminalSession = {
       id: newId(),
       name: options.name ?? `${config.label} ${sessionCount + 1}`,
@@ -109,14 +115,18 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       workspaceId: options.workspaceId ?? DEFAULT_WORKSPACE_ID,
       createdAt: now(),
       lastActiveAt: now(),
-      cwd: options.cwd ?? '',
+      cwd: options.cwd ?? settings.defaultCwd,
       status: config.aiSession ? 'idle' : 'running',
       isPinned: false,
       isWatched: true,
       ptyStarted: false,
-      launchCommand: options.launchCommand ?? config.defaultCommand,
+      launchCommand:
+        options.launchCommand ??
+        config.defaultCommand ??
+        (type === 'shell' ? settings.defaultShell || undefined : undefined),
       pendingInput: options.pendingInput,
       pendingAIContext: options.pendingAIContext,
+      scrollback: '',
     };
 
     set((state) => ({
@@ -169,6 +179,43 @@ export const useSessionStore = create<SessionState>((set, get) => ({
       ),
     }));
     persistSessionRename(sessionId, nextName);
+  },
+  moveSessionToWorkspace: (sessionId, workspaceId) => {
+    const session = get().sessions.find((item) => item.id === sessionId);
+    if (!session) return;
+    const nextSession = { ...session, workspaceId };
+    set((state) => ({
+      sessions: state.sessions.map((item) => (item.id === sessionId ? nextSession : item)),
+    }));
+    persistSession(nextSession);
+  },
+  toggleSessionPinned: (sessionId) => {
+    const session = get().sessions.find((item) => item.id === sessionId);
+    if (!session) return;
+    const nextSession = { ...session, isPinned: !session.isPinned };
+    set((state) => ({
+      sessions: state.sessions.map((item) => (item.id === sessionId ? nextSession : item)),
+    }));
+    persistSession(nextSession);
+  },
+  reorderSessionTab: (sourceSessionId, targetSessionId) =>
+    set((state) => {
+      if (sourceSessionId === targetSessionId) return state;
+      const next = state.mruSessionIds.filter((id) => id !== sourceSessionId);
+      const targetIndex = next.indexOf(targetSessionId);
+      if (targetIndex < 0) return state;
+      next.splice(targetIndex, 0, sourceSessionId);
+      return { mruSessionIds: next };
+    }),
+  updateSessionCwd: (sessionId, cwd) => {
+    const normalized = cwd.trim();
+    const session = get().sessions.find((item) => item.id === sessionId);
+    if (!session || !normalized || session.cwd === normalized) return;
+    const nextSession = { ...session, cwd: normalized };
+    set((state) => ({
+      sessions: state.sessions.map((item) => (item.id === sessionId ? nextSession : item)),
+    }));
+    persistSessionActivity(nextSession, nextSession.lastActiveAt);
   },
   markPtyStarted: (sessionId) =>
     set((state) => ({

@@ -11,7 +11,7 @@ The release workflow in `.github/workflows/release.yml` creates a draft GitHub R
 - Windows: default Windows Tauri bundles
 - Linux: default Linux Tauri bundles
 
-The workflow runs when a version tag is pushed, such as `v0.1.0`, or when it is started manually from GitHub Actions.
+The workflow runs when a version tag is pushed, such as `v0.2.0`, or when it is started manually from GitHub Actions.
 
 ## First Release
 
@@ -22,8 +22,8 @@ git init
 git add .
 git commit -m "Initial NeuralTerm release"
 gh repo create neuralterm --private --source=. --remote=origin --push
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.2.0
+git push origin v0.2.0
 ```
 
 After the workflow finishes, review the draft release on GitHub and publish it.
@@ -36,7 +36,7 @@ Keep these versions aligned before tagging:
 - `src-tauri/tauri.conf.json`
 - `src-tauri/Cargo.toml`
 
-For example, release tag `v0.1.0` should match app version `0.1.0`.
+For example, release tag `v0.2.0` should match app version `0.2.0`.
 
 ## Cost
 
@@ -48,6 +48,10 @@ Unsigned GitHub Release assets are free to create. Production trust requires ext
 - Direct Windows installer signing: paid code-signing certificate
 - Microsoft Store distribution: currently free account registration and Microsoft-hosted signing for Store packages
 - Linux AppImage signing: free GPG key
+
+Tauri updater artifacts use a separate free signing key. The private updater key is stored as the
+`TAURI_SIGNING_PRIVATE_KEY` GitHub Actions secret, while the public key is configured in
+`src-tauri/tauri.conf.json`.
 
 ## Current Signing State
 

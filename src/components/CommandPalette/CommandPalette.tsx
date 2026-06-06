@@ -39,6 +39,14 @@ type PaletteResult =
       label: string;
       description: string;
       hint: string;
+    }
+  | {
+      kind: 'path';
+      path: string;
+      type: 'shell';
+      label: string;
+      description: string;
+      hint: string;
     };
 
 const sessionTypes = Object.keys(SESSION_TYPE_CONFIG) as SessionType[];
@@ -79,6 +87,16 @@ export function CommandPalette({
       description: `${SESSION_TYPE_CONFIG[session.type].label} session`,
       hint: 'Jump',
     }));
+    const pathResults: PaletteResult[] = [...new Set(sessions.map((session) => session.cwd).filter(Boolean))].map(
+      (path) => ({
+        kind: 'path',
+        path,
+        type: 'shell',
+        label: path.split('/').filter(Boolean).slice(-1)[0] ?? path,
+        description: path,
+        hint: 'Open path',
+      }),
+    );
 
     const commandResults: PaletteResult[] = [
       {
@@ -115,7 +133,7 @@ export function CommandPalette({
       },
     ];
 
-    const allResults = [...newSessionResults, ...jumpResults, ...commandResults];
+    const allResults = [...newSessionResults, ...jumpResults, ...pathResults, ...commandResults];
     if (!normalizedQuery) return allResults;
 
     return new Fuse(allResults, {
@@ -164,11 +182,29 @@ export function CommandPalette({
 
   const runResult = (result: PaletteResult) => {
     if (result.kind === 'new') {
-      createSession(result.type, {
+      const options: { workspaceId: string; cwd?: string; launchCommand?: string } = {
         workspaceId: activeWorkspaceId === 'all' ? DEFAULT_WORKSPACE_ID : activeWorkspaceId,
-      });
+      };
+      if (result.type === 'git') {
+        const cwd = window.prompt('Repository directory (leave blank for current directory)', '');
+        if (cwd === null) return;
+        options.cwd = cwd.trim();
+      }
+      if (['docker', 'aws', 'postgres', 'ssh', 'custom'].includes(result.type)) {
+        const suggested = SESSION_TYPE_CONFIG[result.type].defaultCommand ?? '';
+        const command = window.prompt(`${SESSION_TYPE_CONFIG[result.type].label} command`, suggested);
+        if (command === null) return;
+        options.launchCommand = command.trim() || undefined;
+      }
+      createSession(result.type, options);
     } else if (result.kind === 'jump') {
       activateSession(result.sessionId);
+    } else if (result.kind === 'path') {
+      createSession('shell', {
+        name: result.label,
+        cwd: result.path,
+        workspaceId: activeWorkspaceId === 'all' ? DEFAULT_WORKSPACE_ID : activeWorkspaceId,
+      });
     } else if (result.id === 'settings') {
       onOpenSettings();
     } else if (result.id === 'split-right') {
@@ -218,7 +254,9 @@ export function CommandPalette({
                 ? result.type
                 : result.kind === 'jump'
                   ? result.sessionId
-                  : result.id;
+                  : result.kind === 'path'
+                    ? result.path
+                    : result.id;
             return (
               <PaletteItem
                 key={`${result.kind}-${resultKey}`}

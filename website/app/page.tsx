@@ -1,6 +1,6 @@
 import { SiteHeader } from './components/SiteHeader';
 
-const releaseUrl = 'https://github.com/Anuragh33/neuralterm/releases/tag/v0.1.0';
+const releaseUrl = 'https://github.com/Anuragh33/neuralterm/releases/latest';
 
 const sessions = [
   ['release-shell', 'running', 'npm run tauri:build'],
@@ -20,8 +20,8 @@ const releaseTargets = [
 ];
 
 const shellLines = [
-  ['$', 'git tag v0.1.0'],
-  ['$', 'git push origin v0.1.0'],
+  ['$', 'git tag v0.2.0'],
+  ['$', 'git push origin v0.2.0'],
   ['ok', 'release workflow started on GitHub Actions'],
   ['ok', 'macOS Apple Silicon DMG uploaded'],
   ['ok', 'Windows MSI and setup EXE uploaded'],
@@ -44,7 +44,7 @@ const commandPalette = [
   ['/new shell', 'Create a persistent PTY session'],
   ['/split vertical', 'Keep logs beside the active prompt'],
   ['/attach error', 'Send bridge context to Claude Code'],
-  ['/release v0.1.0', 'Open the GitHub release assets'],
+  ['/release v0.2.0', 'Open the GitHub release assets'],
 ];
 
 const features = [
@@ -123,7 +123,7 @@ export default function Home() {
                 </p>
                 <div className="hero-actions" aria-label="Primary actions">
                   <a className="button primary" href={releaseUrl}>
-                    ./download-v0.1.0
+                    ./download-v0.2.0
                   </a>
                   <a className="button secondary" href="#workflow">
                     open workflow
@@ -300,7 +300,7 @@ export default function Home() {
         <section id="download" className="download-section section-pad">
           <div className="section-heading">
             <p className="eyebrow">$ ./download</p>
-            <h2>Release v0.1.0 is published for macOS, Windows, and Linux.</h2>
+            <h2>Release v0.2.0 ships for macOS, Windows, and Linux.</h2>
             <p>
               Signing and notarization are still pending, so operating systems may show trust
               warnings on first launch.

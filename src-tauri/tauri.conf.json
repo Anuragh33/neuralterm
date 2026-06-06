@@ -1,7 +1,7 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "NeuralTerm",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "identifier": "com.neuralterm.desktop",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -22,11 +22,12 @@
       }
     ],
     "security": {
-      "csp": null
+      "csp": "default-src 'self' customprotocol: asset:; connect-src 'self' ipc: http://ipc.localhost https://api.anthropic.com; img-src 'self' asset: data: blob:; style-src 'self' 'unsafe-inline'; font-src 'self' data:; script-src 'self'"
     }
   },
   "bundle": {
     "active": true,
+    "createUpdaterArtifacts": true,
     "targets": "all",
     "icon": [
       "icons/32x32.png",
@@ -35,5 +36,13 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ]
+  },
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDhGMUU4NkEyMzAxMDQzNDEKUldSQlF4QXdvb1llaitLblRvaGdIenFtZ01QYnNFeU1DOTFWencrbHFSSWlBWTZCdHV3b1NWY0EK",
+      "endpoints": [
+        "https://github.com/Anuragh33/neuralterm/releases/latest/download/latest.json"
+      ]
+    }
   }
 }

@@ -2,11 +2,13 @@ import { invoke } from '@tauri-apps/api/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
 import { SettingsPanel } from './components/Settings/SettingsPanel';
+import { Onboarding } from './components/Onboarding/Onboarding';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { StatusBar } from './components/StatusBar/StatusBar';
 import { TerminalGrid } from './components/Terminal/TerminalGrid';
 import { TopBar } from './components/TopBar/TopBar';
 import { useHotkeys } from './hooks/useHotkeys';
+import { useGlobalLauncher } from './hooks/useGlobalLauncher';
 import { hasTauriRuntime } from './lib/runtime';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { useBridgeStore } from './store/bridgeStore';
@@ -43,9 +45,12 @@ export default function App() {
   const focusNextPane = useSplitStore((state) => state.focusNextPane);
   const focusPreviousPane = useSplitStore((state) => state.focusPreviousPane);
   const removeLayout = useSplitStore((state) => state.removeLayout);
+  const pruneLayouts = useSplitStore((state) => state.pruneLayouts);
   const sidebarCollapsed = useSettingsStore((state) => state.sidebarCollapsed);
   const theme = useSettingsStore((state) => state.theme);
   const aiBridgeEnabled = useSettingsStore((state) => state.aiBridgeEnabled);
+  const autoRestoreSessions = useSettingsStore((state) => state.autoRestoreSessions);
+  const idleTimeoutMinutes = useSettingsStore((state) => state.idleTimeoutMinutes);
   const setSidebarCollapsed = useSettingsStore((state) => state.setSidebarCollapsed);
   const fontSize = useSettingsStore((state) => state.fontSize);
   const setFontSize = useSettingsStore((state) => state.setFontSize);
@@ -63,7 +68,7 @@ export default function App() {
         const snapshot = await invoke<PersistenceSnapshot>('get_persistence_snapshot');
         if (cancelled) return;
         hydrateWorkspaces(snapshot.workspaces);
-        hydrateSessions(snapshot.sessions);
+        hydrateSessions(autoRestoreSessions ? snapshot.sessions : []);
       } catch (error) {
         console.error('Failed to restore NeuralTerm state', error);
       } finally {
@@ -77,7 +82,7 @@ export default function App() {
     return () => {
       cancelled = true;
     };
-  }, [hydrateSessions, hydrateWorkspaces]);
+  }, [autoRestoreSessions, hydrateSessions, hydrateWorkspaces]);
 
   useEffect(() => {
     if (!hasTauriRuntime()) return;
@@ -100,6 +105,27 @@ export default function App() {
       createSession('shell', { name: 'Shell 1' });
     }
   }, [createSession, hydrated, sessions.length]);
+
+  useEffect(() => {
+    pruneLayouts(sessions.map((session) => session.id));
+  }, [pruneLayouts, sessions]);
+
+  useEffect(() => {
+    const updateIdleSessions = () => {
+      const cutoff = Date.now() - idleTimeoutMinutes * 60 * 1000;
+      useSessionStore.getState().sessions.forEach((session) => {
+        if (
+          !SESSION_TYPE_CONFIG[session.type].aiSession &&
+          session.status === 'running' &&
+          new Date(session.lastActiveAt).getTime() < cutoff
+        ) {
+          useSessionStore.getState().setSessionStatus(session.id, 'idle');
+        }
+      });
+    };
+    const timer = window.setInterval(updateIdleSessions, 30_000);
+    return () => window.clearInterval(timer);
+  }, [idleTimeoutMinutes]);
 
   const newShell = useCallback(() => {
     createSession('shell', {
@@ -238,6 +264,18 @@ export default function App() {
   );
 
   useHotkeys(hotkeyHandlers);
+  useGlobalLauncher(useCallback(() => setPaletteOpen(true), []));
+
+  useEffect(() => {
+    const splitRight = () => splitActive('horizontal');
+    const splitDown = () => splitActive('vertical');
+    window.addEventListener('neuralterm-split-right', splitRight);
+    window.addEventListener('neuralterm-split-down', splitDown);
+    return () => {
+      window.removeEventListener('neuralterm-split-right', splitRight);
+      window.removeEventListener('neuralterm-split-down', splitDown);
+    };
+  }, [splitActive]);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-app text-primary" data-theme={theme}>
@@ -260,6 +298,7 @@ export default function App() {
         onCloseActive={closeActive}
       />
       <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <Onboarding />
     </div>
   );
 }

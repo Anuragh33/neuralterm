@@ -74,6 +74,30 @@ pub async fn run_shell_command(
     })
 }
 
+#[tauri::command]
+pub fn open_path(path: String) -> Result<(), String> {
+    let path = std::path::PathBuf::from(path);
+    if !path.exists() {
+        return Err("Path does not exist".to_string());
+    }
+
+    #[cfg(target_os = "macos")]
+    let mut process = std::process::Command::new("open");
+    #[cfg(target_os = "windows")]
+    let mut process = {
+        let mut command = std::process::Command::new("explorer.exe");
+        command
+    };
+    #[cfg(all(unix, not(target_os = "macos")))]
+    let mut process = std::process::Command::new("xdg-open");
+
+    process
+        .arg(path)
+        .spawn()
+        .map(|_| ())
+        .map_err(|error| error.to_string())
+}
+
 fn shell_command(command: &str) -> Command {
     #[cfg(windows)]
     {

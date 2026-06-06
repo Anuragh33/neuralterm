@@ -1,6 +1,6 @@
 [package]
 name = "neuralterm"
-version = "0.1.0"
+version = "0.2.0"
 description = "AI-native terminal multiplexer"
 authors = ["NeuralTerm"]
 edition = "2021"
@@ -15,5 +15,8 @@ serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 sqlx = { version = "0.7", features = ["sqlite", "runtime-tokio"] }
 tauri = { version = "2", features = [] }
+tauri-plugin-global-shortcut = "2"
+tauri-plugin-process = "2"
+tauri-plugin-updater = "2"
 tokio = { version = "1", features = ["full"] }
 uuid = { version = "1", features = ["v4", "serde"] }

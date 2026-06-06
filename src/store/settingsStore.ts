@@ -50,6 +50,13 @@ interface SettingsState {
   sidebarCollapsed: boolean;
   sidebarWidth: number;
   aiBridgeEnabled: boolean;
+  globalLauncherEnabled: boolean;
+  onboardingComplete: boolean;
+  defaultShell: string;
+  defaultCwd: string;
+  autoRestoreSessions: boolean;
+  idleTimeoutMinutes: number;
+  maxContextMessages: number;
   shortcuts: ShortcutMap;
   setTheme: (theme: ThemeName) => void;
   setFontFamily: (fontFamily: string) => void;
@@ -60,6 +67,13 @@ interface SettingsState {
   setCursorStyle: (cursorStyle: 'block' | 'underline' | 'bar') => void;
   setCursorBlink: (cursorBlink: boolean) => void;
   setAiBridgeEnabled: (enabled: boolean) => void;
+  setGlobalLauncherEnabled: (enabled: boolean) => void;
+  setOnboardingComplete: (complete: boolean) => void;
+  setDefaultShell: (shell: string) => void;
+  setDefaultCwd: (cwd: string) => void;
+  setAutoRestoreSessions: (enabled: boolean) => void;
+  setIdleTimeoutMinutes: (minutes: number) => void;
+  setMaxContextMessages: (messages: number) => void;
   setShortcut: (action: ShortcutAction, shortcut: string) => void;
   resetShortcuts: () => void;
 }
@@ -76,6 +90,13 @@ type StoredSettings = Partial<
     | 'sidebarCollapsed'
     | 'sidebarWidth'
     | 'aiBridgeEnabled'
+    | 'globalLauncherEnabled'
+    | 'onboardingComplete'
+    | 'defaultShell'
+    | 'defaultCwd'
+    | 'autoRestoreSessions'
+    | 'idleTimeoutMinutes'
+    | 'maxContextMessages'
     | 'shortcuts'
   >
 >;
@@ -103,6 +124,13 @@ const saveSettings = (state: SettingsState) => {
     sidebarCollapsed: state.sidebarCollapsed,
     sidebarWidth: state.sidebarWidth,
     aiBridgeEnabled: state.aiBridgeEnabled,
+    globalLauncherEnabled: state.globalLauncherEnabled,
+    onboardingComplete: state.onboardingComplete,
+    defaultShell: state.defaultShell,
+    defaultCwd: state.defaultCwd,
+    autoRestoreSessions: state.autoRestoreSessions,
+    idleTimeoutMinutes: state.idleTimeoutMinutes,
+    maxContextMessages: state.maxContextMessages,
     shortcuts: state.shortcuts,
   };
   localStorage.setItem(settingsKey, JSON.stringify(serializable));
@@ -120,6 +148,13 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   sidebarCollapsed: storedSettings.sidebarCollapsed ?? false,
   sidebarWidth: storedSettings.sidebarWidth ?? 220,
   aiBridgeEnabled: storedSettings.aiBridgeEnabled ?? true,
+  globalLauncherEnabled: storedSettings.globalLauncherEnabled ?? false,
+  onboardingComplete: storedSettings.onboardingComplete ?? false,
+  defaultShell: storedSettings.defaultShell ?? '',
+  defaultCwd: storedSettings.defaultCwd ?? '',
+  autoRestoreSessions: storedSettings.autoRestoreSessions ?? true,
+  idleTimeoutMinutes: storedSettings.idleTimeoutMinutes ?? 5,
+  maxContextMessages: storedSettings.maxContextMessages ?? 50,
   shortcuts: { ...DEFAULT_SHORTCUTS, ...(storedSettings.shortcuts ?? {}) },
   setTheme: (theme) =>
     set((state) => {
@@ -177,6 +212,50 @@ export const useSettingsStore = create<SettingsState>((set) => ({
       const next = { ...state, aiBridgeEnabled };
       saveSettings(next);
       return { aiBridgeEnabled };
+    }),
+  setGlobalLauncherEnabled: (globalLauncherEnabled) =>
+    set((state) => {
+      const next = { ...state, globalLauncherEnabled };
+      saveSettings(next);
+      return { globalLauncherEnabled };
+    }),
+  setOnboardingComplete: (onboardingComplete) =>
+    set((state) => {
+      const next = { ...state, onboardingComplete };
+      saveSettings(next);
+      return { onboardingComplete };
+    }),
+  setDefaultShell: (defaultShell) =>
+    set((state) => {
+      const next = { ...state, defaultShell };
+      saveSettings(next);
+      return { defaultShell };
+    }),
+  setDefaultCwd: (defaultCwd) =>
+    set((state) => {
+      const next = { ...state, defaultCwd };
+      saveSettings(next);
+      return { defaultCwd };
+    }),
+  setAutoRestoreSessions: (autoRestoreSessions) =>
+    set((state) => {
+      const next = { ...state, autoRestoreSessions };
+      saveSettings(next);
+      return { autoRestoreSessions };
+    }),
+  setIdleTimeoutMinutes: (idleTimeoutMinutes) =>
+    set((state) => {
+      const value = Math.min(120, Math.max(1, idleTimeoutMinutes));
+      const next = { ...state, idleTimeoutMinutes: value };
+      saveSettings(next);
+      return { idleTimeoutMinutes: value };
+    }),
+  setMaxContextMessages: (maxContextMessages) =>
+    set((state) => {
+      const value = Math.min(200, Math.max(20, maxContextMessages));
+      const next = { ...state, maxContextMessages: value };
+      saveSettings(next);
+      return { maxContextMessages: value };
     }),
   setShortcut: (action, shortcut) =>
     set((state) => {

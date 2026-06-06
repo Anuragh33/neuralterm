@@ -11,7 +11,9 @@ interface WorkspaceGroupProps {
 
 export function WorkspaceGroup({ workspace, collapsed }: WorkspaceGroupProps) {
   const sessions = useSessionStore((state) =>
-    state.sessions.filter((session) => session.workspaceId === workspace.id),
+    state.sessions
+      .filter((session) => session.workspaceId === workspace.id)
+      .sort((a, b) => Number(b.isPinned) - Number(a.isPinned)),
   );
   const activeSessionId = useSessionStore((state) => state.activeSessionId);
   const toggleWorkspace = useWorkspaceStore((state) => state.toggleWorkspace);
@@ -63,4 +65,3 @@ export function WorkspaceGroup({ workspace, collapsed }: WorkspaceGroupProps) {
     </section>
   );
 }
-

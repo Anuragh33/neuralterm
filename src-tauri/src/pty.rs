@@ -255,21 +255,17 @@ pub fn kill_pty(
 }
 
 fn build_command(command: Option<&str>) -> CommandBuilder {
-    let command = command
-        .filter(|value| !value.trim().is_empty())
-        .map(str::trim)
-        .map(str::to_string)
-        .unwrap_or_else(default_shell);
+    let shell = default_shell();
+    let Some(command) = command.filter(|value| !value.trim().is_empty()).map(str::trim) else {
+        return CommandBuilder::new(shell);
+    };
 
-    let mut parts = command.split_whitespace();
-    let executable = parts
-        .next()
-        .map(str::to_string)
-        .unwrap_or_else(default_shell);
-    let mut builder = CommandBuilder::new(executable);
-    for arg in parts {
-        builder.arg(arg.to_string());
-    }
+    let mut builder = CommandBuilder::new(shell);
+    #[cfg(windows)]
+    builder.arg("/C");
+    #[cfg(not(windows))]
+    builder.arg("-lc");
+    builder.arg(command);
     builder
 }
 
@@ -370,4 +366,30 @@ fn now_millis() -> u128 {
         .duration_since(UNIX_EPOCH)
         .map(|duration| duration.as_millis())
         .unwrap_or_default()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::{detect_error_title, excerpt};
+
+    #[test]
+    fn detects_common_terminal_failures() {
+        assert_eq!(
+            detect_error_title("npm ERR! build failed"),
+            Some("Package manager error detected".to_string())
+        );
+        assert_eq!(
+            detect_error_title("fatal: not a git repository"),
+            Some("Fatal error detected".to_string())
+        );
+        assert_eq!(detect_error_title("all good"), None);
+    }
+
+    #[test]
+    fn excerpt_is_bounded_and_unicode_safe() {
+        let input = format!("{} error: broken {}", "é".repeat(900), "x".repeat(2_500));
+        let result = excerpt(&input);
+        assert!(result.contains("error: broken"));
+        assert!(result.len() <= 2_100);
+    }
 }

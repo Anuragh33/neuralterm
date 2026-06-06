@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { hasTauriRuntime } from '../lib/runtime';
 import { useSessionStore } from '../store/sessionStore';
 import type { AIMessage, TerminalSession } from '../types';
+import { useSettingsStore } from '../store/settingsStore';
 
 interface ShellCommandOutput {
   status: number | null;
@@ -60,8 +61,8 @@ const loadMessages = async (sessionId: string): Promise<AIMessage[]> => {
   return rawHistory ? (JSON.parse(rawHistory) as AIMessage[]) : [];
 };
 
-const summarizeIfNeeded = (messages: AIMessage[]): AIMessage[] => {
-  if (messages.length <= 50) return messages;
+const summarizeIfNeeded = (messages: AIMessage[], maxMessages: number): AIMessage[] => {
+  if (messages.length <= maxMessages) return messages;
 
   const earlier = messages.slice(0, -30);
   const recent = messages.slice(-30);
@@ -112,6 +113,7 @@ export function useAISession(session: TerminalSession) {
     () => localStorage.getItem(modelKey) ?? import.meta.env.VITE_ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514',
   );
   const createSession = useSessionStore((state) => state.createSession);
+  const maxContextMessages = useSettingsStore((state) => state.maxContextMessages);
   const consumePendingAIContext = useSessionStore((state) => state.consumePendingAIContext);
   const systemPrompt = session.type === 'her' ? HER_PROMPT : CLAUDE_CODE_PROMPT;
   const mood = useMemo(() => classifyMood(messages), [messages]);
@@ -241,7 +243,7 @@ export function useAISession(session: TerminalSession) {
 
       const userMessage = makeMessage('user', trimmed);
       const assistantMessage = makeMessage('assistant', '');
-      const baseHistory = summarizeIfNeeded(messages);
+      const baseHistory = summarizeIfNeeded(messages, maxContextMessages);
       const nextMessages = [...baseHistory, userMessage, assistantMessage];
       setMessages(nextMessages);
 
@@ -309,6 +311,7 @@ export function useAISession(session: TerminalSession) {
       handleSlashCommand,
       input,
       messages,
+      maxContextMessages,
       model,
       streaming,
       systemPrompt,

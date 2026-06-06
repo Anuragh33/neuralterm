@@ -56,6 +56,7 @@ export interface TerminalSession {
   launchCommand?: string;
   pendingInput?: string;
   pendingAIContext?: string;
+  scrollback: string;
 }
 
 export type AIMessageRole = 'user' | 'assistant' | 'system';
@@ -123,12 +124,14 @@ export const SESSION_TYPE_CONFIG: Record<SessionType, SessionTypeConfig> = {
     label: 'Docker',
     icon: Container,
     color: '#60a0d0',
+    defaultCommand: 'docker ps',
     description: 'Shell session for Docker workflows',
   },
   aws: {
     label: 'AWS',
     icon: Cloud,
     color: '#e0a050',
+    defaultCommand: 'aws sts get-caller-identity',
     description: 'Shell session for AWS CLI workflows',
   },
   postgres: {

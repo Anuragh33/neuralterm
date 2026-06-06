@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { ArrowDown, ArrowUp, ExternalLink, RotateCcw, Trash2, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
 import { hasTauriRuntime } from '../../lib/runtime';
@@ -8,6 +8,9 @@ import {
   type ShortcutAction,
   type ThemeName,
 } from '../../store/settingsStore';
+import { useSessionStore } from '../../store/sessionStore';
+import { useWorkspaceStore } from '../../store/workspaceStore';
+import { DEFAULT_WORKSPACE_ID } from '../../types';
 
 interface SettingsPanelProps {
   open: boolean;
@@ -49,6 +52,12 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const cursorBlink = useSettingsStore((state) => state.cursorBlink);
   const shortcuts = useSettingsStore((state) => state.shortcuts);
   const aiBridgeEnabled = useSettingsStore((state) => state.aiBridgeEnabled);
+  const globalLauncherEnabled = useSettingsStore((state) => state.globalLauncherEnabled);
+  const defaultShell = useSettingsStore((state) => state.defaultShell);
+  const defaultCwd = useSettingsStore((state) => state.defaultCwd);
+  const autoRestoreSessions = useSettingsStore((state) => state.autoRestoreSessions);
+  const idleTimeoutMinutes = useSettingsStore((state) => state.idleTimeoutMinutes);
+  const maxContextMessages = useSettingsStore((state) => state.maxContextMessages);
   const setTheme = useSettingsStore((state) => state.setTheme);
   const setFontFamily = useSettingsStore((state) => state.setFontFamily);
   const setFontSize = useSettingsStore((state) => state.setFontSize);
@@ -56,12 +65,27 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const setCursorStyle = useSettingsStore((state) => state.setCursorStyle);
   const setCursorBlink = useSettingsStore((state) => state.setCursorBlink);
   const setAiBridgeEnabled = useSettingsStore((state) => state.setAiBridgeEnabled);
+  const setGlobalLauncherEnabled = useSettingsStore((state) => state.setGlobalLauncherEnabled);
+  const setDefaultShell = useSettingsStore((state) => state.setDefaultShell);
+  const setDefaultCwd = useSettingsStore((state) => state.setDefaultCwd);
+  const setAutoRestoreSessions = useSettingsStore((state) => state.setAutoRestoreSessions);
+  const setIdleTimeoutMinutes = useSettingsStore((state) => state.setIdleTimeoutMinutes);
+  const setMaxContextMessages = useSettingsStore((state) => state.setMaxContextMessages);
   const setShortcut = useSettingsStore((state) => state.setShortcut);
   const resetShortcuts = useSettingsStore((state) => state.resetShortcuts);
+  const setOnboardingComplete = useSettingsStore((state) => state.setOnboardingComplete);
+  const workspaces = useWorkspaceStore((state) => state.workspaces);
+  const renameWorkspace = useWorkspaceStore((state) => state.renameWorkspace);
+  const setWorkspaceColor = useWorkspaceStore((state) => state.setWorkspaceColor);
+  const moveWorkspace = useWorkspaceStore((state) => state.moveWorkspace);
+  const deleteWorkspace = useWorkspaceStore((state) => state.deleteWorkspace);
+  const sessions = useSessionStore((state) => state.sessions);
+  const moveSessionToWorkspace = useSessionStore((state) => state.moveSessionToWorkspace);
   const [apiKey, setApiKey] = useState('');
   const [model, setModel] = useState(
     () => localStorage.getItem('neuralterm.anthropicModel') ?? 'claude-sonnet-4-20250514',
   );
+  const [updateStatus, setUpdateStatus] = useState('Check for updates');
 
   useEffect(() => {
     if (!open) return;
@@ -89,6 +113,35 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
   const saveModel = (value: string) => {
     setModel(value);
     localStorage.setItem('neuralterm.anthropicModel', value);
+  };
+
+  const removeWorkspace = (workspaceId: string) => {
+    sessions
+      .filter((session) => session.workspaceId === workspaceId)
+      .forEach((session) => moveSessionToWorkspace(session.id, DEFAULT_WORKSPACE_ID));
+    deleteWorkspace(workspaceId);
+  };
+
+  const checkForUpdates = async () => {
+    if (!hasTauriRuntime()) {
+      window.open('https://github.com/Anuragh33/neuralterm/releases/latest', '_blank');
+      return;
+    }
+    setUpdateStatus('Checking...');
+    try {
+      const { check } = await import('@tauri-apps/plugin-updater');
+      const update = await check();
+      if (!update) {
+        setUpdateStatus('Up to date');
+        return;
+      }
+      setUpdateStatus(`Installing ${update.version}...`);
+      await update.downloadAndInstall();
+      const { relaunch } = await import('@tauri-apps/plugin-process');
+      await relaunch();
+    } catch (error) {
+      setUpdateStatus(`Update failed: ${String(error)}`);
+    }
   };
 
   if (!open) return null;
@@ -184,6 +237,91 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
         </section>
 
         <section className="space-y-3">
+          <h2 className="text-xs font-semibold uppercase text-secondary">Workspaces</h2>
+          <div className="space-y-2">
+            {workspaces.map((workspace, index) => (
+              <div key={workspace.id} className="grid grid-cols-[24px_1fr_auto] items-center gap-2 rounded border border-border bg-app p-2">
+                <input
+                  type="color"
+                  className="h-6 w-6 cursor-pointer border-0 bg-transparent p-0"
+                  value={workspace.color}
+                  aria-label={`${workspace.name} color`}
+                  onChange={(event) => setWorkspaceColor(workspace.id, event.target.value)}
+                />
+                <input
+                  className="h-8 min-w-0 rounded border border-border bg-[#101016] px-2 text-xs text-primary outline-none"
+                  defaultValue={workspace.name}
+                  aria-label={`${workspace.name} name`}
+                  onBlur={(event) => renameWorkspace(workspace.id, event.target.value)}
+                />
+                <div className="flex items-center">
+                  <button type="button" className="icon-button" disabled={index === 0} aria-label={`Move ${workspace.name} up`} onClick={() => moveWorkspace(workspace.id, -1)}>
+                    <ArrowUp className="h-3.5 w-3.5" />
+                  </button>
+                  <button type="button" className="icon-button" disabled={index === workspaces.length - 1} aria-label={`Move ${workspace.name} down`} onClick={() => moveWorkspace(workspace.id, 1)}>
+                    <ArrowDown className="h-3.5 w-3.5" />
+                  </button>
+                  <button type="button" className="icon-button text-[#e05050]" disabled={workspace.id === DEFAULT_WORKSPACE_ID} aria-label={`Delete ${workspace.name}`} onClick={() => removeWorkspace(workspace.id)}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-xs font-semibold uppercase text-secondary">Application</h2>
+          <label className="flex items-center gap-2 text-xs text-secondary">
+            <input
+              type="checkbox"
+              checked={globalLauncherEnabled}
+              onChange={(event) => setGlobalLauncherEnabled(event.target.checked)}
+            />
+            <span>Global quick launcher (Cmd/Ctrl+Shift+Space)</span>
+          </label>
+          <button
+            type="button"
+            className="flex h-9 w-full items-center gap-2 rounded border border-border bg-app px-3 text-xs text-secondary hover:bg-surface hover:text-primary"
+            onClick={() => void checkForUpdates()}
+          >
+            <ExternalLink className="h-3.5 w-3.5" />
+            <span className="truncate">{updateStatus}</span>
+          </button>
+          <button
+            type="button"
+            className="flex h-9 w-full items-center gap-2 rounded border border-border bg-app px-3 text-xs text-secondary hover:bg-surface hover:text-primary"
+            onClick={() => {
+              setOnboardingComplete(false);
+              onClose();
+            }}
+          >
+            <RotateCcw className="h-3.5 w-3.5" />
+            Show onboarding again
+          </button>
+        </section>
+
+        <section className="space-y-3">
+          <h2 className="text-xs font-semibold uppercase text-secondary">Sessions</h2>
+          <label className="block space-y-1 text-xs text-secondary">
+            <span>Default shell path</span>
+            <input className="h-9 w-full rounded border border-border bg-app px-2 text-sm text-primary outline-none" value={defaultShell} placeholder="Use system default" onChange={(event) => setDefaultShell(event.target.value)} />
+          </label>
+          <label className="block space-y-1 text-xs text-secondary">
+            <span>Default working directory</span>
+            <input className="h-9 w-full rounded border border-border bg-app px-2 text-sm text-primary outline-none" value={defaultCwd} placeholder="Use shell default" onChange={(event) => setDefaultCwd(event.target.value)} />
+          </label>
+          <label className="flex items-center gap-2 text-xs text-secondary">
+            <input type="checkbox" checked={autoRestoreSessions} onChange={(event) => setAutoRestoreSessions(event.target.checked)} />
+            <span>Restore open sessions on startup</span>
+          </label>
+          <label className="block space-y-1 text-xs text-secondary">
+            <span>Idle timeout: {idleTimeoutMinutes} minutes</span>
+            <input type="range" min="1" max="120" value={idleTimeoutMinutes} onChange={(event) => setIdleTimeoutMinutes(Number(event.target.value))} className="w-full" />
+          </label>
+        </section>
+
+        <section className="space-y-3">
           <h2 className="text-xs font-semibold uppercase text-secondary">AI</h2>
           <label className="flex items-center gap-2 text-xs text-secondary">
             <input
@@ -201,6 +339,10 @@ export function SettingsPanel({ open, onClose }: SettingsPanelProps) {
               value={apiKey}
               onChange={(event) => saveApiKey(event.target.value)}
             />
+          </label>
+          <label className="block space-y-1 text-xs text-secondary">
+            <span>Context history limit: {maxContextMessages} messages</span>
+            <input type="range" min="20" max="200" step="10" value={maxContextMessages} onChange={(event) => setMaxContextMessages(Number(event.target.value))} className="w-full" />
           </label>
           <label className="block space-y-1 text-xs text-secondary">
             <span>Default model</span>

@@ -54,6 +54,7 @@ pub struct SessionRecord {
     pub is_watched: bool,
     pub pty_started: bool,
     pub launch_command: Option<String>,
+    pub scrollback: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -213,7 +214,7 @@ pub async fn get_persistence_snapshot(
         r#"
         SELECT
             id, name, session_type, workspace_id, created_at, last_active_at,
-            cwd, is_pinned, is_watched, launch_command
+            cwd, is_pinned, is_watched, launch_command, scroll_position
         FROM sessions
         WHERE closed_at IS NULL
         ORDER BY last_active_at DESC, created_at DESC;
@@ -244,6 +245,9 @@ pub async fn get_persistence_snapshot(
                 is_watched: row.get::<i64, _>("is_watched") != 0,
                 pty_started: false,
                 launch_command: row.get("launch_command"),
+                scrollback: row
+                    .get::<Option<String>, _>("scroll_position")
+                    .unwrap_or_default(),
             }
         })
         .collect();
@@ -300,6 +304,43 @@ pub async fn set_workspace_collapsed(
     .await
     .map(|_| ())
     .map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub async fn delete_workspace(
+    state: State<'_, DbState>,
+    workspace_id: String,
+) -> Result<(), String> {
+    if workspace_id == DEFAULT_WORKSPACE_ID {
+        return Err("The Local workspace cannot be deleted".to_string());
+    }
+
+    let mut transaction = state
+        .pool()?
+        .begin()
+        .await
+        .map_err(|error| error.to_string())?;
+    sqlx::query(
+        r#"
+        UPDATE sessions
+        SET workspace_id = ?1, updated_at = CURRENT_TIMESTAMP
+        WHERE workspace_id = ?2;
+        "#,
+    )
+    .bind(DEFAULT_WORKSPACE_ID)
+    .bind(&workspace_id)
+    .execute(&mut *transaction)
+    .await
+    .map_err(|error| error.to_string())?;
+    sqlx::query("DELETE FROM workspaces WHERE id = ?1;")
+        .bind(workspace_id)
+        .execute(&mut *transaction)
+        .await
+        .map_err(|error| error.to_string())?;
+    transaction
+        .commit()
+        .await
+        .map_err(|error| error.to_string())
 }
 
 #[tauri::command]
@@ -453,6 +494,27 @@ pub async fn save_ai_messages(
     )
     .bind(request.session_id)
     .bind(history)
+    .execute(state.pool()?)
+    .await
+    .map(|_| ())
+    .map_err(|error| error.to_string())
+}
+
+#[tauri::command]
+pub async fn save_terminal_scrollback(
+    state: State<'_, DbState>,
+    session_id: String,
+    scrollback: String,
+) -> Result<(), String> {
+    sqlx::query(
+        r#"
+        UPDATE sessions
+        SET scroll_position = ?2, updated_at = CURRENT_TIMESTAMP
+        WHERE id = ?1;
+        "#,
+    )
+    .bind(session_id)
+    .bind(scrollback)
     .execute(state.pool()?)
     .await
     .map(|_| ())
