@@ -100,7 +100,7 @@ pub fn spawn_pty(
         command.cwd(cwd);
     }
 
-    let child = pair
+    let mut child = pair
         .slave
         .spawn_command(command)
         .map_err(|error| error.to_string())?;
@@ -121,6 +121,11 @@ pub fn spawn_pty(
             .sessions
             .lock()
             .map_err(|_| "PTY state lock was poisoned".to_string())?;
+        if sessions.contains_key(&request.session_id) {
+            // A concurrent spawn raced us; clean up and return the existing session.
+            let _ = child.kill();
+            return Ok(PtySpawned { session_id });
+        }
         sessions.insert(
             request.session_id.clone(),
             PtyProcess {
@@ -362,11 +367,14 @@ fn excerpt(data: &str) -> String {
             let end = (position + 1_300).min(value.len());
             let mut safe_start = start;
             let mut safe_end = end;
-            while !value.is_char_boundary(safe_start) {
+            while safe_start < safe_end && !value.is_char_boundary(safe_start) {
                 safe_start += 1;
             }
-            while !value.is_char_boundary(safe_end) {
+            while safe_end > safe_start && !value.is_char_boundary(safe_end) {
                 safe_end -= 1;
+            }
+            if safe_start >= safe_end {
+                continue;
             }
             return value[safe_start..safe_end].trim().to_string();
         }
@@ -377,7 +385,7 @@ fn excerpt(data: &str) -> String {
     }
 
     let mut start = value.len().saturating_sub(2_000);
-    while !value.is_char_boundary(start) {
+    while start < value.len() && !value.is_char_boundary(start) {
         start += 1;
     }
     value[start..].to_string()

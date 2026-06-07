@@ -107,7 +107,10 @@ export function useAISession(session: TerminalSession) {
   const [listening, setListening] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [apiKey, setApiKeyState] = useState(
-    () => localStorage.getItem(apiKeyKey) ?? import.meta.env.VITE_ANTHROPIC_API_KEY ?? '',
+    () =>
+      hasTauriRuntime()
+        ? (import.meta.env.VITE_ANTHROPIC_API_KEY ?? '')
+        : (localStorage.getItem(apiKeyKey) ?? import.meta.env.VITE_ANTHROPIC_API_KEY ?? ''),
   );
   const [model, setModelState] = useState(
     () => localStorage.getItem(modelKey) ?? import.meta.env.VITE_ANTHROPIC_MODEL ?? 'claude-sonnet-4-20250514',

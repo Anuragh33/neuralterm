@@ -96,11 +96,12 @@ export const useSplitStore = create<SplitState>((set) => ({
     set((state) => {
       const layout = state.layouts[rootSessionId];
       if (!layout) return state;
+      const count = layout.paneIds.length;
       const layouts: Record<string, SplitLayout> = {
         ...state.layouts,
         [rootSessionId]: {
           ...layout,
-          activePaneIndex: layout.activePaneIndex === 0 ? 1 : 0,
+          activePaneIndex: ((layout.activePaneIndex + 1) % count) as 0 | 1,
         },
       };
       saveLayouts(layouts);
@@ -110,11 +111,12 @@ export const useSplitStore = create<SplitState>((set) => ({
     set((state) => {
       const layout = state.layouts[rootSessionId];
       if (!layout) return state;
+      const count = layout.paneIds.length;
       const layouts: Record<string, SplitLayout> = {
         ...state.layouts,
         [rootSessionId]: {
           ...layout,
-          activePaneIndex: layout.activePaneIndex === 0 ? 1 : 0,
+          activePaneIndex: ((layout.activePaneIndex - 1 + count) % count) as 0 | 1,
         },
       };
       saveLayouts(layouts);
