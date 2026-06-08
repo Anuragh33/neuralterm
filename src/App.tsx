@@ -1,6 +1,7 @@
 import { invoke } from '@tauri-apps/api/core';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { CommandPalette } from './components/CommandPalette/CommandPalette';
+import { HistorySearch } from './components/Terminal/HistorySearch';
 import { SettingsPanel } from './components/Settings/SettingsPanel';
 import { Onboarding } from './components/Onboarding/Onboarding';
 import { Sidebar } from './components/Sidebar/Sidebar';
@@ -26,6 +27,7 @@ import {
 export default function App() {
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
   const [hydrated, setHydrated] = useState(false);
   const sessions = useSessionStore((state) => state.sessions);
   const activeSessionId = useSessionStore((state) => state.activeSessionId);
@@ -70,7 +72,7 @@ export default function App() {
         hydrateWorkspaces(snapshot.workspaces);
         hydrateSessions(autoRestoreSessions ? snapshot.sessions : []);
       } catch (error) {
-        console.error('Failed to restore NeuralTerm state', error);
+        console.error('Failed to restore Pngun state', error);
       } finally {
         if (!cancelled) {
           setHydrated(true);
@@ -239,6 +241,7 @@ export default function App() {
       switchPanePrevious: () => activeSessionId && focusPreviousPane(activeSessionId),
       switchPaneNext: () => activeSessionId && focusNextPane(activeSessionId),
       searchTerminal,
+      historySearch: () => setHistoryOpen(true),
       switchWorkspace,
       cycleTabsForward: () => cycleTabs(1),
       cycleTabsBackward: () => cycleTabs(-1),
@@ -298,6 +301,11 @@ export default function App() {
         onCloseActive={closeActive}
       />
       <SettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+      <HistorySearch
+        open={historyOpen}
+        sessionId={activeSessionId}
+        onClose={() => setHistoryOpen(false)}
+      />
       <Onboarding />
     </div>
   );

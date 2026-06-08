@@ -34,6 +34,7 @@ const shortcutLabels: Array<{ action: ShortcutAction; label: string }> = [
   { action: 'splitVertical', label: 'Split down' },
   { action: 'closeActive', label: 'Close active pane/tab' },
   { action: 'searchTerminal', label: 'Terminal search' },
+  { action: 'historySearch', label: 'Command history search' },
   { action: 'switchPanePrevious', label: 'Focus previous pane' },
   { action: 'switchPaneNext', label: 'Focus next pane' },
   { action: 'cycleTabsForward', label: 'Cycle tabs forward' },

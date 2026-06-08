@@ -10,6 +10,7 @@ export type ShortcutAction =
   | 'splitVertical'
   | 'closeActive'
   | 'searchTerminal'
+  | 'historySearch'
   | 'switchPanePrevious'
   | 'switchPaneNext'
   | 'cycleTabsForward'
@@ -29,6 +30,7 @@ export const DEFAULT_SHORTCUTS: ShortcutMap = {
   splitVertical: 'Mod+Shift+D',
   closeActive: 'Mod+W',
   searchTerminal: 'Mod+F',
+  historySearch: 'Mod+Shift+H',
   switchPanePrevious: 'Mod+[',
   switchPaneNext: 'Mod+]',
   cycleTabsForward: 'Ctrl+Tab',

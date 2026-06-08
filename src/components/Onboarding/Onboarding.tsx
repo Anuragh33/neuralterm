@@ -11,7 +11,7 @@ const steps = [
   {
     icon: Bot,
     title: 'AI context when it matters',
-    body: 'NeuralTerm watches opted-in terminals for failures and can attach the output to Claude Code.',
+    body: 'Pngun watches opted-in terminals for failures and can attach the output to Claude Code.',
   },
   {
     icon: KeyRound,
@@ -34,7 +34,7 @@ export function Onboarding() {
     <div className="fixed inset-0 z-[70] grid place-items-center bg-black/70 p-4" role="dialog" aria-modal="true">
       <section className="w-full max-w-lg overflow-hidden rounded-md border border-border bg-[#111118] shadow-2xl">
         <div className="border-b border-border px-5 py-4">
-          <div className="text-xs font-semibold uppercase text-[#7f77dd]">Welcome to NeuralTerm</div>
+          <div className="text-xs font-semibold uppercase text-[#7f77dd]">Welcome to Pngun</div>
           <div className="mt-1 text-sm text-secondary">Step {step + 1} of {steps.length}</div>
         </div>
         <div className="p-6">

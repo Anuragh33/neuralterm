@@ -1,6 +1,6 @@
 {
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
-  "productName": "NeuralTerm",
+  "productName": "Pngun",
   "version": "0.2.2",
   "identifier": "com.neuralterm.desktop",
   "build": {
@@ -12,7 +12,7 @@
   "app": {
     "windows": [
       {
-        "title": "NeuralTerm",
+        "title": "Pngun",
         "width": 1240,
         "height": 760,
         "minWidth": 920,

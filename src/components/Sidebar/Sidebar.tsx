@@ -1,6 +1,5 @@
 import {
   AlertTriangle,
-  BrainCircuit,
   Check,
   PanelLeftClose,
   PanelLeftOpen,
@@ -112,13 +111,13 @@ export function Sidebar({ onNewSession }: SidebarProps) {
       style={{ width }}
     >
       <div className="flex h-14 items-center gap-2 border-b border-border px-3">
-        <div className="grid h-8 w-8 shrink-0 place-items-center rounded bg-active text-[#b09ee0]">
-          <BrainCircuit className="h-4.5 w-4.5" aria-hidden="true" />
+        <div className="grid h-8 w-8 shrink-0 place-items-center rounded bg-active" aria-hidden="true">
+          <PenguinLogo />
         </div>
         {!sidebarCollapsed && (
           <div className="min-w-0">
-            <div className="truncate text-sm font-semibold text-primary">NeuralTerm</div>
-            <div className="truncate text-xs text-secondary">AI-native mux</div>
+            <div className="truncate text-sm font-semibold text-primary">Pngun</div>
+            <div className="truncate text-xs text-secondary">AI-native terminal</div>
           </div>
         )}
         <button
@@ -273,5 +272,35 @@ export function Sidebar({ onNewSession }: SidebarProps) {
         />
       )}
     </aside>
+  );
+}
+
+function PenguinLogo() {
+  return (
+    <svg viewBox="0 0 32 32" width="22" height="22" xmlns="http://www.w3.org/2000/svg">
+      {/* wings */}
+      <ellipse cx="7.5" cy="19" rx="4" ry="9" fill="#0d0d18" transform="rotate(-10,7.5,19)" />
+      <ellipse cx="24.5" cy="19" rx="4" ry="9" fill="#0d0d18" transform="rotate(10,24.5,19)" />
+      {/* body */}
+      <ellipse cx="16" cy="20" rx="8.5" ry="11" fill="#13131f" />
+      {/* belly */}
+      <ellipse cx="16" cy="21" rx="5" ry="7.5" fill="#dddcf6" />
+      {/* head */}
+      <circle cx="16" cy="10" r="7.5" fill="#13131f" />
+      {/* face */}
+      <ellipse cx="16" cy="10.5" rx="5" ry="5.5" fill="#dddcf6" />
+      {/* eyes */}
+      <circle cx="13.5" cy="9" r="1.8" fill="white" />
+      <circle cx="18.5" cy="9" r="1.8" fill="white" />
+      <circle cx="14" cy="9.3" r="1.1" fill="#111118" />
+      <circle cx="19" cy="9.3" r="1.1" fill="#111118" />
+      <circle cx="14" cy="9.3" r="0.6" fill="#8b80ed" />
+      <circle cx="19" cy="9.3" r="0.6" fill="#8b80ed" />
+      {/* beak */}
+      <path d="M14.5 12.5 Q16 12 17.5 12.5 L17 14 Q16 14.6 15 14 Z" fill="#f0a830" />
+      {/* feet */}
+      <ellipse cx="12.5" cy="29.5" rx="3.2" ry="1.4" fill="#f0a830" transform="rotate(-8,12.5,29.5)" />
+      <ellipse cx="19.5" cy="29.5" rx="3.2" ry="1.4" fill="#f0a830" transform="rotate(8,19.5,29.5)" />
+    </svg>
   );
 }

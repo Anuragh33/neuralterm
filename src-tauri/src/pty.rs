@@ -138,6 +138,7 @@ pub fn spawn_pty(
 
     thread::spawn(move || {
         let mut buffer = [0_u8; 8192];
+        let mut carry: Vec<u8> = Vec::new();
         let mut last_bridge_alert = Instant::now() - Duration::from_secs(60);
         loop {
             match reader.read(&mut buffer) {
@@ -153,7 +154,13 @@ pub fn spawn_pty(
                     break;
                 }
                 Ok(size) => {
-                    let data = String::from_utf8_lossy(&buffer[..size]).to_string();
+                    carry.extend_from_slice(&buffer[..size]);
+                    let boundary = last_complete_utf8_boundary(&carry);
+                    let data = String::from_utf8_lossy(&carry[..boundary]).to_string();
+                    carry = carry[boundary..].to_vec();
+                    if data.is_empty() {
+                        continue;
+                    }
                     if let Some(title) = detect_error_title(&data) {
                         if last_bridge_alert.elapsed() >= Duration::from_secs(12) {
                             last_bridge_alert = Instant::now();
@@ -278,13 +285,16 @@ fn build_command(command: Option<&str>) -> CommandBuilder {
     let mut builder = CommandBuilder::new(shell);
     builder.env("TERM", "xterm-256color");
     builder.env("COLORTERM", "truecolor");
+    builder.env("LANG", "en_US.UTF-8");
+    builder.env("LC_ALL", "en_US.UTF-8");
+    builder.env("TERM_PROGRAM", "NeuralTerm");
 
     let Some(command) = command
         .filter(|value| !value.trim().is_empty())
         .map(str::trim)
     else {
         #[cfg(not(windows))]
-        builder.arg("-i");
+        builder.arg("-li");
         return builder;
     };
 
@@ -294,6 +304,33 @@ fn build_command(command: Option<&str>) -> CommandBuilder {
     builder.arg("-lc");
     builder.arg(command);
     builder
+}
+
+// Returns the largest N such that bytes[..N] contains only complete UTF-8 sequences.
+// Keeps any trailing incomplete multi-byte sequence in the carry buffer.
+fn last_complete_utf8_boundary(bytes: &[u8]) -> usize {
+    if bytes.is_empty() {
+        return 0;
+    }
+    // Walk backward from the end — at most 3 bytes back (max UTF-8 seq is 4 bytes).
+    let check_start = bytes.len().saturating_sub(3);
+    for i in (check_start..bytes.len()).rev() {
+        let b = bytes[i];
+        if b & 0xC0 == 0x80 {
+            continue; // continuation byte — keep scanning back
+        }
+        // Start byte or ASCII: determine expected sequence length.
+        let expected = if b & 0xF8 == 0xF0 { 4 }
+            else if b & 0xF0 == 0xE0 { 3 }
+            else if b & 0xE0 == 0xC0 { 2 }
+            else { 1 };
+        let available = bytes.len() - i;
+        if available < expected {
+            return i; // incomplete sequence at end — split before it
+        }
+        break;
+    }
+    bytes.len()
 }
 
 fn default_shell() -> String {
@@ -400,7 +437,7 @@ fn now_millis() -> u128 {
 
 #[cfg(test)]
 mod tests {
-    use super::{build_command, detect_error_title, excerpt};
+    use super::{build_command, detect_error_title, excerpt, last_complete_utf8_boundary};
 
     #[test]
     fn launches_default_shell_interactively() {
@@ -408,7 +445,7 @@ mod tests {
         #[cfg(not(windows))]
         assert_eq!(
             command.get_argv().last().and_then(|arg| arg.to_str()),
-            Some("-i")
+            Some("-li")
         );
         assert_eq!(
             command.get_env("TERM").and_then(|value| value.to_str()),
@@ -427,6 +464,30 @@ mod tests {
             Some("Fatal error detected".to_string())
         );
         assert_eq!(detect_error_title("all good"), None);
+    }
+
+    #[test]
+    fn utf8_boundary_detects_split_sequences() {
+        // ─ is U+2500, encoded as [0xE2, 0x94, 0x80] (3-byte sequence)
+        let full = "─".as_bytes(); // [0xe2, 0x94, 0x80]
+        assert_eq!(last_complete_utf8_boundary(full), 3);
+
+        // Two bytes of a 3-byte sequence — split mid-char
+        let partial = &full[..2]; // [0xe2, 0x94]
+        assert_eq!(last_complete_utf8_boundary(partial), 0);
+
+        // One leading byte of a 3-byte sequence
+        let leading = &full[..1]; // [0xe2]
+        assert_eq!(last_complete_utf8_boundary(leading), 0);
+
+        // ASCII is never split
+        let ascii = b"hello";
+        assert_eq!(last_complete_utf8_boundary(ascii), 5);
+
+        // Valid text followed by a partial sequence
+        let mut mixed = b"abc".to_vec();
+        mixed.extend_from_slice(&full[..2]);
+        assert_eq!(last_complete_utf8_boundary(&mixed), 3);
     }
 
     #[test]

@@ -2,7 +2,7 @@
 name = "neuralterm"
 version = "0.2.2"
 description = "AI-native terminal multiplexer"
-authors = ["NeuralTerm"]
+authors = ["Pngun"]
 edition = "2021"
 
 [build-dependencies]

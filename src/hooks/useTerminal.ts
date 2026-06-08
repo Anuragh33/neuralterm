@@ -11,6 +11,8 @@ import { useSessionStore } from '../store/sessionStore';
 import { useSettingsStore } from '../store/settingsStore';
 import type { PtyDataEvent, PtyFailureEvent, TerminalSession } from '../types';
 import { extractOscCwd } from '../lib/terminal';
+import { XTERM_THEMES } from '../lib/xtermThemes';
+import { appendCommand } from '../lib/commandHistory';
 
 const hasTauriRuntime = () =>
   typeof window !== 'undefined' && typeof window.__TAURI_INTERNALS__ !== 'undefined';
@@ -33,12 +35,12 @@ export function useTerminal(
   const lineHeight = useSettingsStore((state) => state.lineHeight);
   const cursorStyle = useSettingsStore((state) => state.cursorStyle);
   const cursorBlink = useSettingsStore((state) => state.cursorBlink);
+  const theme = useSettingsStore((state) => state.theme);
 
   useEffect(() => {
     if (!containerRef.current || terminalRef.current) return;
 
     const terminal = new Terminal({
-      convertEol: true,
       cursorBlink,
       cursorStyle,
       fontFamily: `"${fontFamily}", SFMono-Regular, Menlo, monospace`,
@@ -46,28 +48,7 @@ export function useTerminal(
       lineHeight,
       macOptionIsMeta: true,
       scrollback: 8000,
-      theme: {
-        background: '#0e0e10',
-        foreground: '#e0dff8',
-        cursor: '#e0dff8',
-        selectionBackground: '#313145',
-        black: '#15151a',
-        red: '#e05050',
-        green: '#4db877',
-        yellow: '#e0a050',
-        blue: '#60a0d0',
-        magenta: '#b09ee0',
-        cyan: '#61c7c7',
-        white: '#e0dff8',
-        brightBlack: '#5a5a66',
-        brightRed: '#ff7676',
-        brightGreen: '#6bdc96',
-        brightYellow: '#ffc36b',
-        brightBlue: '#7bbbea',
-        brightMagenta: '#d0b8ff',
-        brightCyan: '#82e4e4',
-        brightWhite: '#ffffff',
-      },
+      theme: XTERM_THEMES[theme],
     });
 
     const fitAddon = new FitAddon();
@@ -156,8 +137,22 @@ export function useTerminal(
       }
     };
 
+    let lineBuffer = '';
     const dataDisposable = terminal.onData((data) => {
       markActivity();
+
+      // Build per-session command history from keystrokes
+      if (data === '\r') {
+        appendCommand(session.id, lineBuffer);
+        lineBuffer = '';
+      } else if (data === '\x7f' || data === '\x08') {
+        lineBuffer = lineBuffer.slice(0, -1);
+      } else if (data === '\x03' || data === '\x04') {
+        lineBuffer = '';
+      } else if (!data.startsWith('\x1b') && data.charCodeAt(0) >= 32) {
+        lineBuffer += data;
+      }
+
       if (!hasTauriRuntime()) {
         terminal.write(data);
         return;
@@ -166,6 +161,18 @@ export function useTerminal(
         terminal.writeln(`\r\n\x1b[31mPTY write failed: ${String(error)}\x1b[0m`);
       });
     });
+
+    const onInject = (event: Event) => {
+      const customEvent = event as CustomEvent<{ sessionId: string; data: string }>;
+      if (customEvent.detail.sessionId !== session.id) return;
+      const text = customEvent.detail.data;
+      if (hasTauriRuntime()) {
+        void writeToPty(text).catch(() => undefined);
+      } else {
+        terminal.write(text);
+      }
+    };
+    window.addEventListener('neuralterm-terminal-inject', onInject);
 
     const onFocusRequest = (event: Event) => {
       const customEvent = event as CustomEvent<{ sessionId: string }>;
@@ -258,7 +265,7 @@ export function useTerminal(
 
     const spawn = async () => {
       if (!hasTauriRuntime()) {
-        terminal.writeln('\x1b[35mNeuralTerm browser preview\x1b[0m');
+        terminal.writeln('\x1b[35mPngun browser preview\x1b[0m');
         terminal.writeln('Run `npm run tauri:dev` to attach this pane to a real PTY.');
         terminal.write('\r\n$ ');
         if (session.pendingInput) {
@@ -299,6 +306,7 @@ export function useTerminal(
       window.removeEventListener('neuralterm-terminal-focus', onFocusRequest);
       window.removeEventListener('neuralterm-terminal-search', onSearchRequest);
       window.removeEventListener('neuralterm-terminal-action', onTerminalAction);
+      window.removeEventListener('neuralterm-terminal-inject', onInject);
       unlistenData?.();
       unlistenError?.();
       unlistenExit?.();
@@ -318,6 +326,7 @@ export function useTerminal(
     markPtyStarted,
     session.id,
     setSessionStatus,
+    theme,
     updateSessionCwd,
   ]);
 
@@ -347,4 +356,10 @@ export function useTerminal(
       }
     });
   }, [fontSize, lineHeight]);
+
+  useEffect(() => {
+    if (terminalRef.current) {
+      terminalRef.current.options.theme = XTERM_THEMES[theme];
+    }
+  }, [theme]);
 }

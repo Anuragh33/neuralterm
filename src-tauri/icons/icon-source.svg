@@ -1,19 +1,59 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <!-- Background -->
   <rect width="1024" height="1024" rx="224" fill="#111118"/>
-  <rect x="56" y="56" width="912" height="912" rx="176" fill="#181822" stroke="#333344" stroke-width="24"/>
+  <rect x="56" y="56" width="912" height="912" rx="176" fill="#181822" stroke="#2a2a38" stroke-width="20"/>
 
-  <rect x="176" y="224" width="672" height="576" rx="72" fill="#0d0d14" stroke="#8178df" stroke-width="28"/>
-  <path d="M176 344h672" stroke="#333344" stroke-width="28"/>
+  <!-- Wings (drawn behind body) -->
+  <ellipse cx="306" cy="628" rx="70" ry="185" fill="#0d0d18" transform="rotate(-11, 306, 628)"/>
+  <ellipse cx="718" cy="628" rx="70" ry="185" fill="#0d0d18" transform="rotate(11, 718, 628)"/>
 
-  <circle cx="248" cy="284" r="22" fill="#df6662"/>
-  <circle cx="316" cy="284" r="22" fill="#e6ae5f"/>
-  <circle cx="384" cy="284" r="22" fill="#72bf8b"/>
+  <!-- Body -->
+  <ellipse cx="512" cy="638" rx="200" ry="258" fill="#13131f"/>
 
-  <path d="M300 466l132 116-132 116" fill="none" stroke="#8b80ed" stroke-linecap="round" stroke-linejoin="round" stroke-width="64"/>
-  <path d="M506 700h194" fill="none" stroke="#64b5d8" stroke-linecap="round" stroke-width="64"/>
+  <!-- White belly -->
+  <ellipse cx="512" cy="664" rx="118" ry="188" fill="#dddcf6"/>
 
-  <circle cx="688" cy="468" r="30" fill="#64b5d8"/>
-  <circle cx="760" cy="520" r="24" fill="#8b80ed"/>
-  <circle cx="708" cy="574" r="20" fill="#72bf8b"/>
-  <path d="M688 468l72 52-52 54" fill="none" stroke="#55546b" stroke-linecap="round" stroke-width="18"/>
+  <!-- Head -->
+  <circle cx="512" cy="316" r="182" fill="#13131f"/>
+
+  <!-- White face patch -->
+  <ellipse cx="512" cy="332" rx="122" ry="132" fill="#dddcf6"/>
+
+  <!-- Eyes — white sclera -->
+  <circle cx="462" cy="292" r="44" fill="white"/>
+  <circle cx="562" cy="292" r="44" fill="white"/>
+
+  <!-- Pupils -->
+  <circle cx="468" cy="300" r="28" fill="#111118"/>
+  <circle cx="568" cy="300" r="28" fill="#111118"/>
+
+  <!-- Iris (purple — NeuralTerm palette) -->
+  <circle cx="468" cy="300" r="17" fill="#8b80ed"/>
+  <circle cx="568" cy="300" r="17" fill="#8b80ed"/>
+
+  <!-- Eye shine -->
+  <circle cx="479" cy="289" r="9" fill="white"/>
+  <circle cx="579" cy="289" r="9" fill="white"/>
+
+  <!-- Beak -->
+  <path d="M 486 372 Q 512 358 538 372 L 526 414 Q 512 426 498 414 Z" fill="#f0a830"/>
+  <!-- Beak mid-line crease -->
+  <path d="M 488 384 Q 512 378 536 384" fill="none" stroke="#c07818" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- Terminal prompt on belly: >_ in app colors -->
+  <path d="M 460 624 L 490 650 L 460 676" fill="none" stroke="#8b80ed" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="504" y="660" width="52" height="16" rx="8" fill="#64b5d8"/>
+
+  <!-- Feet -->
+  <ellipse cx="444" cy="882" rx="66" ry="28" fill="#f0a830" transform="rotate(-10, 444, 882)"/>
+  <ellipse cx="580" cy="882" rx="66" ry="28" fill="#f0a830" transform="rotate(10, 580, 882)"/>
+
+  <!-- Toe separators (subtle) -->
+  <path d="M 420 876 Q 422 904 412 912" fill="none" stroke="#c07818" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 448 872 Q 448 904 440 914" fill="none" stroke="#c07818" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 474 876 Q 470 906 464 914" fill="none" stroke="#c07818" stroke-width="7" stroke-linecap="round"/>
+
+  <path d="M 550 876 Q 554 906 548 914" fill="none" stroke="#c07818" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 576 872 Q 576 904 572 914" fill="none" stroke="#c07818" stroke-width="7" stroke-linecap="round"/>
+  <path d="M 604 876 Q 602 904 614 912" fill="none" stroke="#c07818" stroke-width="7" stroke-linecap="round"/>
 </svg>
