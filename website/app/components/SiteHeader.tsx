@@ -28,9 +28,9 @@ export function SiteHeader() {
 
   return (
     <header className="site-header" data-scrolled={scrolled || undefined}>
-      <a className="brand" href="#top" aria-label="NeuralTerm home" onClick={() => setNavOpen(false)}>
+      <a className="brand" href="#top" aria-label="Pngun home" onClick={() => setNavOpen(false)}>
         <img src="/images/icon.png" alt="" />
-        <span>neuralterm@desktop:~$</span>
+        <span>pngun@desktop:~$</span>
       </a>
       <button
         className="nav-toggle"

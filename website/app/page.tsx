@@ -78,12 +78,12 @@ export default function Home() {
       <SiteHeader />
       <main id="top">
         <section className="operator-hero" aria-labelledby="hero-title">
-          <div className="console-shell" aria-label="NeuralTerm interface concept">
+          <div className="console-shell" aria-label="Pngun interface concept">
             <div className="console-titlebar">
               <span className="window-dot red-dot" />
               <span className="window-dot amber-dot" />
               <span className="window-dot green-dot" />
-              <strong>neuralterm</strong>
+              <strong>pngun</strong>
               <span>release-lab.local</span>
             </div>
 
@@ -114,11 +114,11 @@ export default function Home() {
               <div className="hero-command">
                 <p className="prompt-line">
                   <span>$</span>{' '}
-                  <code className="typed-command">neuralterm --workspace release-lab --ai-bridge</code>
+                  <code className="typed-command">pngun --workspace release-lab --ai-bridge</code>
                 </p>
                 <h1 id="hero-title">A terminal workspace built for AI-assisted shipping.</h1>
                 <p>
-                  NeuralTerm combines real PTYs, split panes, persistent workspaces, Claude Code,
+                  Pngun combines real PTYs, split panes, persistent workspaces, Claude Code,
                   HER, and failure-aware terminal context in one desktop app.
                 </p>
                 <div className="hero-actions" aria-label="Primary actions">
@@ -274,10 +274,10 @@ export default function Home() {
             </p>
           </div>
           <figure className="workspace-preview">
-            <figcaption>neuralterm workspace preview</figcaption>
+            <figcaption>pngun workspace preview</figcaption>
             <img
               src="/images/neuralterm-workspace.svg"
-              alt="NeuralTerm workspace preview with sidebar, split terminals, and AI panel"
+              alt="Pngun workspace preview with sidebar, split terminals, and AI panel"
             />
           </figure>
         </section>
@@ -322,7 +322,7 @@ export default function Home() {
 
       <footer className="site-footer">
         <div>
-          <strong>NeuralTerm</strong>
+          <strong>Pngun</strong>
           <span>AI-native terminal multiplexer</span>
         </div>
         <nav aria-label="Footer navigation">
